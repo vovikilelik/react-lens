@@ -1,7 +1,8 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "GPL-3.0-or-later",
+    "description": "Utils for lens implementations in react apps",
     "keywords": [
         "util",
         "functional",
@@ -21,8 +22,7 @@
     "dependencies": {
         "@vovikilelik/lens-ts": "^1.2.1",
         "react": "^17.0.1",
-        "react-dom": "^17.0.1",
-        "webpack-cli": "^4.3.0"
+        "react-dom": "^17.0.1"
     },
     "devDependencies": {
         "@types/react": "^17.0.0",
@@ -31,7 +31,8 @@
         "ts-loader": "^5.2.1",
         "typescript": "^4.1.3",
         "webpack": "^5.11.0",
-        "live-server": "^1.2.1"
+        "live-server": "^1.2.1",
+        "webpack-cli": "^4.3.0"
     },
     "scripts": {
         "start": "live-server",
