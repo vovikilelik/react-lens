@@ -1,14 +1,16 @@
 import { Lens } from "@vovikilelik/lens-ts";
 import React, { Component } from "react";
 import { createLensComponent, getHtmlLikeModel } from "../react-lens";
+import { ClassComponent } from "./ClassComponent";
 
 const LensInput = createLensComponent<string>(<input />, getHtmlLikeModel());
 
 interface State {
     name: string;
+    counter: number;
 }
 
-const store = { lens: { name: '123' } };
+const store = { lens: { name: '123', counter: 0 } };
 
 const lens = new Lens<State>(
   () => store.lens,
@@ -31,6 +33,8 @@ class App extends Component {
                 <LensInput 
                    lens={lens.go('name')}
                 />
+                <ClassComponent lens={lens.go('counter')} />
+                <ClassComponent lens={lens.go('counter')} />
             </div>
         );
     }

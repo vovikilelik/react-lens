@@ -27,3 +27,29 @@ export const createLensComponent = (component, model, comparator = () => true) =
         };
         return React.createElement(component.type || component.prototype, props, children);
     };
+    
+export class LensComponent extends React.Component {
+    constructor(props) {
+        super(props);
+
+        const {lens} = this.props;
+        this.state = { value: lens.get() };
+
+        this._lensCallback = this._onLensChanged.bind(this);
+    }
+    
+    _onLensChanged(e) {
+        const {lens} = this.props;
+        this.setState({ value: lens.get() });
+    }
+    
+    componentDidMount() {
+        const {lens} = this.props;
+        lens.attach(this._lensCallback);
+    }
+    
+    componentWillUnmount() {
+        const {lens} = this.props;
+        lens.detach(this._lensCallback);
+    }
+}

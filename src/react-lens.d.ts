@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Lens, AttachEvent } from "@vovikilelik/lens-ts";
 
 declare type Comparator<T> = (e: AttachEvent<T>) => any;
@@ -22,3 +22,5 @@ declare function createLensComponent<L, P = {}>(
     model: Model<L, any, any>,
     comparator?: Comparator<L>
 ): React.FC<P & { lens: Lens<L> }>
+
+declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {}
