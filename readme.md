@@ -27,7 +27,7 @@ export class ClassComponent extends LensComponent<number, Props> {
 }
 ```
 # Inherit
-### Inherit native lens-components
+### Inherit native components
 ```ts
 import { createLensComponent, getHtmlLikeModel } from "@vovikilelik/react-lens";
 
@@ -36,7 +36,7 @@ const LensInput = createLensComponent<string>(
     getHtmlLikeModel()
 );
 ```
-### Inherit custom lens-components
+### Inherit custom components
 ```ts
 interface Props {
     text: string;
