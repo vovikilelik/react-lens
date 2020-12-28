@@ -3,6 +3,16 @@ import React, { Component } from "react";
 import { createLensComponent, getHtmlLikeModel } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 
+function Throttling(defaultTimeout) {
+    let sync = 0;
+    this.run = (func, timeout = defaultTimeout) => {
+        const stamp = ++sync;
+        setTimeout(() => {
+            (sync === stamp) && func();
+        }, timeout);
+    };
+}
+
 const LensInput = createLensComponent<string>(<input />, getHtmlLikeModel());
 
 interface State {
