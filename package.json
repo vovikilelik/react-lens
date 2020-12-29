@@ -1,6 +1,6 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "GPL-3.0-or-later",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
@@ -13,9 +13,12 @@
     ],
     "files": [
         "index.js",
+        "index.d.ts",
         "src/react-lens.js",
         "src/react-lens.d.ts"
     ],
+    "typings": "index.d.ts",
+    "types": "index.d.ts",
     "main": "index.js",
     "author": "octopus",
     "contributors": [],
