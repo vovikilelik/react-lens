@@ -1,7 +1,9 @@
 import React from 'react';
-import { Lens, AttachEvent } from "@vovikilelik/lens-ts";
+import { Lens, AttachEvent, Callback } from "@vovikilelik/lens-ts";
 
 declare type Comparator<T> = (e: AttachEvent<T>) => any;
+
+declare function useLensAttach<T>(lens: Lens<T>, callback?: Callback<T>): void;
 
 declare function useLens<T>(lens: Lens<T>, comparator?: Comparator<T>): [T, (value: T) => void];
 
