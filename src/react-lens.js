@@ -43,11 +43,15 @@ export const createLensComponent = (component, model) =>
     ({lens, children, ...rest}) => {
         const [value, setValue] = useLens(lens);
         const {getter, setter} = model;
+		
+        const prevProps = (component.props && typeof component.props === 'object') ? component.props : {};
         const props = {
+            ...prevProps,
             [getter.name]: getter.mapper(value),
             [setter.name]: (e) => setValue(setter.mapper(e)),
             ...rest
         };
+		
         return React.createElement(component.type || component.prototype, props, children);
     };
     
