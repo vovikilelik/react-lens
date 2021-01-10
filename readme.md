@@ -1,3 +1,7 @@
+# Links
+* For more help, please follow to [this repository](http://git.vovikilelik.com/Clu/lens-ts.git)
+* Demo [react-lens-cat](http://git.vovikilelik.com/Clu/react-lens-cats)
+
 # react-lens
 It is the utils for easy implementation `lens` on react-apps.
 # Creation own components
@@ -62,5 +66,3 @@ const Application: React.FC = (props) => {
     )
 }
 ```
-
-For more help, please follow to [this repository](http://git.vovikilelik.com/Clu/lens-ts.git)
