@@ -15,7 +15,7 @@ import React, { useState, useEffect } from 'react';
  */
 export const useLens = (lens) => {
     const [value, setValue] = useState();
-    useLensAttach(lens, () => setValue(lens.get()), [lens]);
+    useLensAttach(lens, () => setValue(lens.get()));
     return [lens.get(), (value) => lens.set(value)];
 };
 
