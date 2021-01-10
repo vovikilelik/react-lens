@@ -60,7 +60,7 @@ const LensInput = createLensComponent<string, Props>(Input, inputModel);
 import { lens } from './store';
 
 const Application: React.FC = () => {
-	const anInputLens = lens.go('anInput');
+    const anInputLens = lens.go('anInput');
 
     return (
         <div>
