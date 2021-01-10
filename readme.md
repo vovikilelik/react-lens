@@ -56,6 +56,25 @@ const inputModel = {
 const LensInput = createLensComponent<string, Props>(Input, inputModel);
 ```
 ### Using lens-components
+
+**Make store.ts**
+```ts
+interface Store {
+	anInput: string;
+}
+
+const store: { lens: Store } = { lens: { anInput: '' } };
+
+export lens = new Lens<Store>(
+	() => store.lens,
+	(data, effect) => {
+		store.lens = data;
+		effect();
+	}
+);
+```
+
+**Import and use**
 ```ts
 import { lens } from './store';
 
@@ -65,7 +84,7 @@ const Application: React.FC = () => {
     return (
         <div>
             <div>Lens Component</div>
-            <LensInput lens={anInputLens}/>
+            <LensInput lens={anInputLens} />
         </div>
     )
 }
