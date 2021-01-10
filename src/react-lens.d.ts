@@ -1,11 +1,11 @@
 import React from 'react';
-import { Lens, AttachEvent, Callback } from "@vovikilelik/lens-ts";
-
-declare type Comparator<T> = (e: AttachEvent<T>) => any;
+import { Lens, Callback } from "@vovikilelik/lens-ts";
 
 declare function useLensAttach<T>(lens: Lens<T>, callback?: Callback<T>): void;
 
-declare function useLens<T>(lens: Lens<T>, comparator?: Comparator<T>): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>): [T, (value: T) => void];
+
+declare function useLensCatch<T>(lens: Lens<T>): number;
 
 declare interface ModelVector<A, B = A> {
     name: string;
@@ -21,8 +21,7 @@ declare function getHtmlLikeModel<T, G extends {target: {value: T}}>(): Model<T,
 
 declare function createLensComponent<L, P = {}>(
     component: React.ReactElement<P>,
-    model: Model<L, any, any>,
-    comparator?: Comparator<L>
+    model: Model<L, any, any>
 ): React.FC<P & { lens: Lens<L> }>
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {}

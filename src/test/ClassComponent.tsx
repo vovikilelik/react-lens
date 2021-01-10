@@ -4,7 +4,6 @@ import { LensComponent } from "../react-lens";
 interface Props {
     className?: string;
 }
-
 export class ClassComponent extends LensComponent<number, Props> {
     public render() {
         const {lens} = this.props;

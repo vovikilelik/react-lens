@@ -13,16 +13,20 @@ import React, { useState, useEffect } from 'react';
 /**
  * Like useState(), plus adding listener for render triggering.
  */
-export const useLens = (lens, comparator = () => true) => {
+export const useLens = (lens) => {
     const [value, setValue] = useState();
-    useEffect(() => {
-        const callback = e => comparator(e) && setValue(lens.get());
-        lens.attach(callback);
-        return () => lens.detach(callback);
-    }, [lens, comparator]);
-    
+    useLensAttach(lens, () => setValue(lens.get()), [lens]);
     return [lens.get(), (value) => lens.set(value)];
 };
+
+/**
+ * Detected node changes and return changes count
+ */
+export const useLensCatch = (lens) => {
+    const [version, setVersion] = useState(0);
+    useLensAttach(lens, () => setVersion(version + 1));
+    return version;
+}
 
 /**
  * Gettig default get-set mapper for standart Html components.
@@ -35,9 +39,9 @@ export const getHtmlLikeModel = () => ({
 /**
  * Covering custom component
  */
-export const createLensComponent = (component, model, comparator = () => true) =>
+export const createLensComponent = (component, model) =>
     ({lens, children, ...rest}) => {
-        const [value, setValue] = useLens(lens, comparator);
+        const [value, setValue] = useLens(lens);
         const {getter, setter} = model;
         const props = {
             [getter.name]: getter.mapper(value),
