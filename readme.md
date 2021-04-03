@@ -67,10 +67,7 @@ const store: { lens: Store } = { lens: { anInput: '' } };
 
 export lens = new Lens<Store>(
 	() => store.lens,
-	(data, effect) => {
-		store.lens = data;
-		effect();
-	}
+	(data) => { store.lens = data; }
 );
 ```
 
