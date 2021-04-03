@@ -9,9 +9,9 @@ It is the utils for easy implementation `lens` on react-apps.
 ```ts
 import { useLens } from "@vovikilelik/react-lens";
 
-const MyLensComponent: React.FC = ({lens}) => {
-    const [value, setValue] = useLens<number>(lens);
-    return <button onClick={() => setValue(value + 1)}>{ value }</button>
+const LensCounter: React.FC = ({lens}) => {
+    const [count, setCount] = useLens<number>(lens);
+    return <button onClick={() => setCount(count + 1)}>{ count }</button>
 }
 ```
 ### Class
