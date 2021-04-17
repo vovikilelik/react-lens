@@ -36,6 +36,8 @@ export const getHtmlLikeModel = () => ({
     setter: {name: 'onChange', mapper: (e) => e.target.value}
 });
 
+const _defaultMapper = (value) => value;
+
 /**
  * Covering custom component
  */
@@ -47,8 +49,8 @@ export const createLensComponent = (component, model) =>
         const prevProps = (component.props && typeof component.props === 'object') ? component.props : {};
         const props = {
             ...prevProps,
-            [getter.name]: getter.mapper(value),
-            [setter.name]: (e) => setValue(setter.mapper(e)),
+            [getter.name]: getter.mapper ? getter.mapper(value) : _defaultMapper(value),
+            [setter.name]: (e) => setValue(setter.mapper ? setter.mapper(e) : _defaultMapper(e)),
             ...rest
         };
 		
