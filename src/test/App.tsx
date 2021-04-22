@@ -26,7 +26,6 @@ const lens = new Lens<State>(
   () => store.lens,
   (value, effect) => {
       store.lens = value;
-      effect();
   }
 );
 
