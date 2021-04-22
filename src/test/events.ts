@@ -33,16 +33,14 @@ const test = () => {
     
     console.log(JSON.stringify(store));
     
-    const m: LensUtils.Mapper<Table, Ficus> = {
-        getter: (v: Table) => ({one: v.apple, two: v.orange}),
-        setter: (v: Ficus) => ({apple: v.one, orange: v.two})
-    }
+    const getter = (v: Table) => ({one: v.apple, two: v.orange});
+    const setter = (v: Ficus) => ({apple: v.one, orange: v.two});
 
     lens.attach(e => {
         console.log('root', e);
     });
 
-    const x = lens.go<Ficus>('table', LensUtils.getMapper(m));
+    const x = lens.go<Ficus>('table', LensUtils.getMapper(getter, setter));
 
     x.attach(e => {
         console.log(e);
