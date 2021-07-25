@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
         lens.attach(callback);
         return () => lens.detach(callback);
     }, [lens, callback]);
-}
+};
 
 /**
  * Like useState(), plus adding listener for render triggering.
@@ -32,8 +32,8 @@ export const useLensCatch = (lens) => {
  * Gettig default get-set mapper for standart Html components.
  */
 export const getHtmlLikeModel = () => ({
-    getter: {name: 'value', mapper: (v) => v},
-    setter: {name: 'onChange', mapper: (e) => e.target.value}
+    getter: { name: 'value', mapper: (v) => v },
+    setter: { name: 'onChange', mapper: (e) => e.target.value }
 });
 
 const _defaultMapper = (value) => value;
@@ -42,7 +42,7 @@ const _defaultMapper = (value) => value;
  * Covering custom component
  */
 export const createLensComponent = (component, model) =>
-    ({lens, children, ...rest}) => {
+    ({ lens, children, ...rest }) => {
         const [value, setValue] = useLens(lens);
         const {getter, setter} = model;
 		
