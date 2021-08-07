@@ -1,6 +1,6 @@
-import { Lens } from "@vovikilelik/lens-ts";
-import React, { Component } from "react";
-import { createLensComponent, getHtmlLikeModel } from "../react-lens";
+import { CoreFactory, Factory, Lens, LensUtils } from "@vovikilelik/lens-ts";
+import React, { Component, useCallback, useState } from "react";
+import { useLens, createLensComponent, getHtmlLikeModel, useLensAttach, CallbackFactory, useLensDebounce } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 
 function Throttling(defaultTimeout) {
@@ -24,23 +24,50 @@ const store = { lens: { name: '123', counter: 0 } };
 
 const lens = new Lens<State>(
   () => store.lens,
-  (value, effect) => {
+  (value) => {
       store.lens = value;
   }
 );
 
+const debounceFactory = (core: CoreFactory<any>) => (key: string, current: Lens<any>) => {
+    const l = core(key, current) as Lens<any>;
+    // const debounce = new LensUtils.Debounce(100);
+
+    return new Lens<any>(
+        () => l.get(),
+        (v, c) => {
+            l.set(v, c);
+        },
+        l
+    );
+}
+
 lens.go('name').attach(e => console.log(JSON.stringify(lens.get())));
+
+const TestInput: React.FC<{lens: Lens<string>}> = ({ lens }) => {
+    //const [value, setValue] = useLens(lens, (lens, resolve) => LensUtils.getDebounceCallback(() => resolve(lens.get()), 1000));
+
+    //const [value, setValue] = useLensDebounce(lens, 1000, (resolve, lens) => LensUtils.getDebounceCallback(() => resolve(lens.get()), 1000));
+    const [value, setValue] = useLensDebounce(lens, 1000);
+
+    return <input value={value} onChange={e => setValue(e.target.value)} />
+}
 
 class App extends Component {
     render() {
+        const name = lens.go('name', debounceFactory);
+
         return (
             <div>
                 <h1>My React App!</h1>
                 <LensInput 
-                   lens={lens.go('name')}
+                   lens={name}
                 />
                 <LensInput 
-                   lens={lens.go('name')}
+                   lens={name}
+                />
+                <TestInput 
+                   lens={name}
                 />
                 <ClassComponent lens={lens.go('counter')} />
                 <ClassComponent lens={lens.go('counter')} />

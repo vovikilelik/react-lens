@@ -1,9 +1,17 @@
 import React from 'react';
 import { Lens, Callback } from "@vovikilelik/lens-ts";
 
-declare function useLensAttach<T>(lens: Lens<T>, callback?: Callback<T>): void;
+declare function useLensAttach<T>(lens: Lens<T>, callback: Callback<T>): void;
 
-declare function useLens<T>(lens: Lens<T>): [T, (value: T) => void];
+declare interface CallbackFactory<T> {
+    (resolve: (value: T) => void, lens: Lens<T>): Callback<T>;
+}
+
+declare function useLens<T>(lens: Lens<T>, factory: CallbackFactory<T>): [T, (value: T) => void];
+
+declare type TimeoutSet = { read: number, write: number };
+
+declare function useLensDebounce<T>(lens: Lens<T>, timeout?: number | TimeoutSet, callbackFactory?: CallbackFactory<T>): [T, (value: T) => void];
 
 declare function useLensCatch<T>(lens: Lens<T>): number;
 
@@ -17,11 +25,11 @@ declare interface Model<L, G, S> {
     setter: ModelVector<S, L>  // onChanged
 }
 
-declare function getHtmlLikeModel<T, G extends {target: {value: T}}>(): Model<T, T, G>
+declare function getHtmlLikeModel<T, G extends { target: { value: T } }>(): Model<T, T, G>
 
 declare function createLensComponent<L, P = {}>(
     component: React.ReactElement<P>,
     model: Model<L, any, any>
 ): React.FC<P & { lens: Lens<L> }>
 
-declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {}
+declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> { }
