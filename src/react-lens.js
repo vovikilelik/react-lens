@@ -91,20 +91,6 @@ export const useLensCatch = (lens) => {
 };
 
 /**
- * Like useState(), plus adding listener for render triggering.
- */
-export const useDebounceLens = (lens, callbackFactory = defaultCallbackFactory) => {
-	const [value, setValue] = useState();
-
-	const attach = useMemo(() => {
-		return callbackFactory(lens, (state) => setValue(state));
-	}, [lens, callbackFactory]);
-	useLensAttach(lens, attach);
-
-	return [lens.get(), (value) => lens.set(value)];
-};
-
-/**
  * Gettig default get-set mapper for standart Html components.
  */
 export const getHtmlLikeModel = () => ({
