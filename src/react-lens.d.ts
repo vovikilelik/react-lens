@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lens, Callback } from "@vovikilelik/lens-ts";
+import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-ts";
 
 declare function useLensAttach<T>(lens: Lens<T>, callback: Callback<T>): void;
 
@@ -7,11 +7,13 @@ declare interface CallbackFactory<T> {
     (resolve: (value: T) => void, lens: Lens<T>): Callback<T>;
 }
 
-declare function useLens<T>(lens: Lens<T>, factory: CallbackFactory<T>): [T, (value: T) => void];
-
 declare type TimeoutSet = { read: number, write: number };
 
-declare function useLensDebounce<T>(lens: Lens<T>, timeout?: number | TimeoutSet, callbackFactory?: CallbackFactory<T>): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>, factory: CallbackFactory<T>): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>, factoryType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
+
+declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, callbackFactory?: CallbackFactory<T>): [T, (value: T) => void];
+declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, factoryType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
 
 declare function useLensCatch<T>(lens: Lens<T>): number;
 

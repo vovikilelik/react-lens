@@ -1,23 +1,33 @@
-# Links
-* For more help, please follow to [this repository](http://git.vovikilelik.com/Clu/lens-ts.git)
-* Demo [react-lens-cat](http://git.vovikilelik.com/Clu/react-lens-cats)
+It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
 
-# react-lens
-It is the utils for easy implementation [`lens-ts`](https://www.npmjs.com/package/@vovikilelik/lens-ts) on react-apps.
+# Wiki
+* [React-Lens](http://git.vovikilelik.com/Clu/react-lens/wiki/Home-en)
+* [Demo project](http://git.vovikilelik.com/Clu/react-lens-cats)
 
-# Creation own components
-## FC
+# Initialize
+```ts
+/* Lens core */
+import { Lens, ... } from '@vovikilelik/lens-ts';
+
+/* React implementation */
+import { useLens, ...and more } from '@vovikilelik/react-lens';
+```
+
+# Creation stateless components
 You can create Lens component with using `useLens()` hook, whitch use like `useState()`
 
 ```ts
 import { useLens } from "@vovikilelik/react-lens";
 
-const LensCounter: React.FC = ({ lens }) => {
+const Counter: React.FC = ({ lens }) => {
     const [count, setCount] = useLens<number>(lens);
     return <button onClick={() => setCount(count + 1)}>{ count }</button>
 }
+
+/* uses */
+<Counter lens={lens.go('counter')} />
 ```
-## Class
+# Creation statefull components
 You can create an own class component extending `LensComponent<L, P, S>`, like `React.Component<P, S>`, where `L` is type of `Lens` node.
 ```ts
 import { LensComponent } from "@vovikilelik/react-lens";
@@ -33,10 +43,12 @@ export class Counter extends LensComponent<number, Props> {
         return <button onClick={ () => lens.set(value + 1) }>{ value }</button>
     }
 }
+
+/* uses */
+<Counter lens={lens.go('counter')} />
 ```
 
-# Covering
-## Covering native components
+# Third-patry components
 Pattern of covering native components looks like:
 ```ts
 import { createLensComponent, getHtmlLikeModel } from "@vovikilelik/react-lens";
@@ -46,8 +58,7 @@ const LensInput = createLensComponent<string>(
     getHtmlLikeModel()
 );
 ```
-## Covering custom components
-Example of covering any component, like `<Input text='' onTextChanged={} />`
+Example of covering user component, like `<Input text='' onTextChanged={} />`
 ```ts
 /* Any component */
 interface Props {
@@ -66,33 +77,31 @@ const LensInput = createLensComponent<string, Props>(Input, inputModel);
 /* Uses */
 <LensInput lens={anyLens} />
 ```
-# Using lens-components
+# Example
 
 **Make store.ts**
 ```ts
+import { LensUtils } from '@vovikilelik/lens-ts';
+
 interface Store {
-	anInput: string;
+	counter: number;
 }
 
-const store: { lens: Store } = { lens: { anInput: '' } };
-
-export lens = new Lens<Store>(
-	() => store.lens,
-	(data) => { store.lens = data; }
-);
+export const lens = LensUtils.createLens<Store>({ counter: 0 });
 ```
 
 **Import and use**
 ```ts
 import { lens } from './store';
+import { Counter } from './Counter';
 
 const Application: React.FC = () => {
-    const anInputLens = lens.go('anInput');
+    const counterLens = lens.go('counter');
 
     return (
         <div>
             <div>Lens Component</div>
-            <LensInput lens={anInputLens} />
+            <Counter lens={counterLens} />
         </div>
     )
 }

@@ -13,14 +13,38 @@ export const useLensAttach = (lens, callback) => {
 
 const defaultCallbackFactory = (resolve, lens) => () => resolve(lens.get());
 
+const getCallbackFactoryByType = (type) => {
+	switch(type) {
+		case 'path':
+			return (resolve, lens) => LensUtils.getPathCallback(() => resolve(lens.get()));
+		case 'tree':
+			return (resolve, lens) => LensUtils.getTreeCallback(() => resolve(lens.get()));
+		case 'strict':
+		default:
+			return (resolve, lens) => LensUtils.getStrictCallback(() => resolve(lens.get()));
+	}
+};
+
+const createCallbackFactory = (callbackFactory) => {
+	switch(typeof callbackFactory) {
+		case 'function':
+			return callbackFactory;
+		case 'string':
+			return getCallbackFactoryByType(callbackFactory);
+		default:
+			return defaultCallbackFactory;
+	}
+};
+
 /**
  * Like useState(), plus adding listener for render triggering.
  */
-export const useLens = (lens, callbackFactory = defaultCallbackFactory) => {
+export const useLens = (lens, callbackFactory = 'strict') => {
 	const [value, setValue] = useState();
 
 	const attach = useMemo(() => {
-		return callbackFactory(state => setValue(state), lens);
+		const factory = createCallbackFactory(callbackFactory);
+		return factory(state => setValue(state), lens);
 	}, [lens, callbackFactory]);
 	useLensAttach(lens, attach);
 
@@ -39,21 +63,22 @@ const getTimeoutSet = (timeout = 0) => {
 /**
  * Like useLens(), plus adding throttling.
  */
-export const useLensDebounce = (lens, timeout = 0, callbackFactory = defaultCallbackFactory) => {
+export const useLensAsync = (lens, timeout = 0, callbackFactory = 'strict') => {
 	const [value, setValue] = useState(lens.get());
 	const debounce = useMemo(() => new LensUtils.Debounce(timeout), []);
 
-	const {read, write} = getTimeoutSet(timeout);
+	const { read, write } = getTimeoutSet(timeout);
 
 	const attach = useMemo(() => {
-		return callbackFactory(state => debounce.run(() => setValue(state), read), lens);
+		const factory = createCallbackFactory(callbackFactory);
+		return factory(state => debounce.run(() => setValue(state), read), lens);
 	}, [lens, read, callbackFactory]);
 	useLensAttach(lens, attach);
 
 	return [value, (v) => {
-			setValue(v);
-			debounce.run(() => lens.set(v), write);
-		}];
+		setValue(v);
+		debounce.run(() => lens.set(v), write);
+	}];
 };
 
 /**
@@ -63,7 +88,7 @@ export const useLensCatch = (lens) => {
 	const [version, setVersion] = useState(0);
 	useLensAttach(lens, () => setVersion(version + 1));
 	return version;
-}
+};
 
 /**
  * Like useState(), plus adding listener for render triggering.

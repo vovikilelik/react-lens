@@ -1,6 +1,6 @@
-import { CoreFactory, Factory, Lens, LensUtils } from "@vovikilelik/lens-ts";
+import { Lens, LensUtils } from "@vovikilelik/lens-ts";
 import React, { Component, useCallback, useState } from "react";
-import { useLens, createLensComponent, getHtmlLikeModel, useLensAttach, CallbackFactory, useLensDebounce } from "../react-lens";
+import { useLens, useLensAsync, createLensComponent, getHtmlLikeModel, useLensAttach, CallbackFactory } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 
 function Throttling(defaultTimeout) {
@@ -29,33 +29,20 @@ const lens = new Lens<State>(
   }
 );
 
-const debounceFactory = (core: CoreFactory<any>) => (key: string, current: Lens<any>) => {
-    const l = core(key, current) as Lens<any>;
-    // const debounce = new LensUtils.Debounce(100);
-
-    return new Lens<any>(
-        () => l.get(),
-        (v, c) => {
-            l.set(v, c);
-        },
-        l
-    );
-}
-
 lens.go('name').attach(e => console.log(JSON.stringify(lens.get())));
 
 const TestInput: React.FC<{lens: Lens<string>}> = ({ lens }) => {
     //const [value, setValue] = useLens(lens, (lens, resolve) => LensUtils.getDebounceCallback(() => resolve(lens.get()), 1000));
 
     //const [value, setValue] = useLensDebounce(lens, 1000, (resolve, lens) => LensUtils.getDebounceCallback(() => resolve(lens.get()), 1000));
-    const [value, setValue] = useLensDebounce(lens, 1000);
+    const [value, setValue] = useLensAsync(lens, 1000);
 
     return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
 class App extends Component {
     render() {
-        const name = lens.go('name', debounceFactory);
+        const name = lens.go('name');
 
         return (
             <div>

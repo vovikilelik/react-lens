@@ -40,7 +40,7 @@ const test = () => {
         console.log('root', e);
     });
 
-    const x = lens.go('table', LensUtils.getMapper(getter, setter));
+    const x = lens.go('table').chain(LensUtils.transform(getter, setter));
 
     x.attach(e => {
         console.log(e);
