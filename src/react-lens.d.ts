@@ -10,10 +10,10 @@ declare interface CallbackFactory<T> {
 declare type TimeoutSet = { read: number, write: number };
 
 declare function useLens<T>(lens: Lens<T>, factory: CallbackFactory<T>): [T, (value: T) => void];
-declare function useLens<T>(lens: Lens<T>, factoryType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>, callbackType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
 
 declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, callbackFactory?: CallbackFactory<T>): [T, (value: T) => void];
-declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, factoryType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
+declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, callbackType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
 
 declare function useLensCatch<T>(lens: Lens<T>): number;
 
