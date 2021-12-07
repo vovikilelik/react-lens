@@ -4,48 +4,49 @@ import { LensUtils } from '@vovikilelik/lens-js';
 /**
  * Add listener to current lens.
  */
-export const useLensAttach = (lens, callback) => {
+export const useLensAttach = (lens, ...callback) => {
 	useEffect(() => {
-		lens.attach(callback);
-		return () => lens.detach(callback);
-	}, [lens, callback]);
+		callback.forEach(c => lens.attach(c));
+		return () => callback.forEach(c => lens.detach(c));
+	}, [lens, ...callback]);
 };
 
-const defaultCallbackFactory = (resolve, lens) => () => resolve(lens.get());
-
-const getCallbackFactoryByType = (type) => {
-	switch(type) {
+const getCallbackByDirective = (directive) => {
+	switch (directive) {
 		case 'path':
-			return (resolve, lens) => LensUtils.getPathCallback(() => resolve(lens.get()));
+			return ({ current, diffs }) => current || diffs.length > 0;
 		case 'tree':
-			return (resolve, lens) => LensUtils.getTreeCallback(() => resolve(lens.get()));
-		case 'strict':
-		default:
-			return (resolve, lens) => LensUtils.getStrictCallback(() => resolve(lens.get()));
+			return ({ current, diffs }) => current || diffs.length === 0;
+		default: // strict
+			return ({ current }) => current;
 	}
 };
 
-const createCallbackFactory = (callbackFactory) => {
-	switch(typeof callbackFactory) {
+const matchMapper = (callbackOrDirective) => {
+	switch (typeof callbackOrDirective) {
 		case 'function':
-			return callbackFactory;
+			return callbackOrDirective;
 		case 'string':
-			return getCallbackFactoryByType(callbackFactory);
-		default:
-			return defaultCallbackFactory;
+			return getCallbackByDirective(callbackOrDirective);
 	}
 };
 
 /**
  * Like useState(), plus adding listener for render triggering.
  */
-export const useLens = (lens, callbackFactory = 'strict') => {
+export const useLens = (lens, callback = 'strict', ...callbacks) => {
 	const [value, setValue] = useState();
-
+	
+	const all = [callback, ...callbacks];
+	
 	const attach = useMemo(() => {
-		const factory = createCallbackFactory(callbackFactory);
-		return factory(state => setValue(state), lens);
-	}, [lens, callbackFactory]);
+		const matches = all.map(matchMapper);
+		return (...args) => {
+			if (matches.some(m => m(...args))) {
+				setValue(lens.get());
+			}
+		};
+	}, [lens, ...all]);
 	useLensAttach(lens, attach);
 
 	return [lens.get(), (value) => lens.set(value)];
@@ -63,16 +64,22 @@ const getTimeoutSet = (timeout = 0) => {
 /**
  * Like useLens(), plus adding throttling.
  */
-export const useLensAsync = (lens, timeout = 0, callbackFactory = 'strict') => {
+export const useLensDebounce = (lens, timeout = 0, callback = 'strict', ...callbacks) => {
 	const [value, setValue] = useState(lens.get());
 	const debounce = useMemo(() => new LensUtils.Debounce(timeout), []);
 
 	const { read, write } = getTimeoutSet(timeout);
-
+	
+	const all = [callback, ...callbacks];
+	
 	const attach = useMemo(() => {
-		const factory = createCallbackFactory(callbackFactory);
-		return factory(state => debounce.run(() => setValue(state), read), lens);
-	}, [lens, read, callbackFactory]);
+		const matches = all.map(matchMapper);
+		return (...args) => {
+			if (matches.some(m => m(...args))) {
+				debounce.run(() => setValue(lens.get()), read);
+			}
+		};
+	}, [lens, read, ...all]);
 	useLensAttach(lens, attach);
 
 	return [value, (v) => {

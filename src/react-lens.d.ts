@@ -1,19 +1,18 @@
 import React from 'react';
 import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-ts";
 
-declare function useLensAttach<T>(lens: Lens<T>, callback: Callback<T>): void;
+declare function useLensAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 
-declare interface CallbackFactory<T> {
-    (resolve: (value: T) => void, lens: Lens<T>): Callback<T>;
+declare type MatchFunction<T> = (event: AttachEvent<T>, node: Lens<T>) => any;
+declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'path' | 'strict' | 'tree';
+declare interface TimeoutSet {
+	read: number;
+	write: number;
 }
 
-declare type TimeoutSet = { read: number, write: number };
+declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
 
-declare function useLens<T>(lens: Lens<T>, factory: CallbackFactory<T>): [T, (value: T) => void];
-declare function useLens<T>(lens: Lens<T>, callbackType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
-
-declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, callbackFactory?: CallbackFactory<T>): [T, (value: T) => void];
-declare function useLensAsync<T>(lens: Lens<T>, timeout: number | TimeoutSet, callbackType?: 'path' | 'strict' | 'tree'): [T, (value: T) => void];
+declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
 
 declare function useLensCatch<T>(lens: Lens<T>): number;
 
