@@ -25,6 +25,8 @@ const Counter: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
     return <button onClick={() => setCount(count + 1)}>{ count }</button>
 }
 
+`useLens` will automatically re-render component if lens node has been changed externally.
+
 /* uses */
 <Counter lens={/* Your counter lens */} />
 ```
