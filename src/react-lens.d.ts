@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-ts";
 
-declare function useLensAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
+declare function useAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 
 declare type MatchFunction<T> = (event: AttachEvent<T>, node: Lens<T>) => any;
-declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'path' | 'strict' | 'tree';
+declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'change' | 'node' | 'before' | 'after';
 declare interface TimeoutSet {
 	read: number;
 	write: number;
@@ -12,9 +13,9 @@ declare interface TimeoutSet {
 
 declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
 
-declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
+declare function useDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
 
-declare function useLensCatch<T>(lens: Lens<T>): number;
+declare function useCatch<T>(lens: Lens<T>): number;
 
 declare interface ModelVector<A, B = A> {
     name: string;

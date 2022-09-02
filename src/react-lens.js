@@ -1,55 +1,48 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { LensUtils } from '@vovikilelik/lens-js';
+
+import { LensUtils } from '@vovikilelik/lens-ts';
 
 /**
  * Add listener to current lens.
  */
-export const useLensAttach = (lens, ...callback) => {
+export const useAttach = (lens, ...callback) => {
 	useEffect(() => {
 		callback.forEach(c => lens.attach(c));
 		return () => callback.forEach(c => lens.detach(c));
 	}, [lens, ...callback]);
 };
 
-const getCallbackByDirective = (directive) => {
-	switch (directive) {
-		case 'path':
-			return ({ current, diffs }) => current || diffs.length > 0;
-		case 'tree':
-			return ({ current, diffs }) => current || diffs.length === 0;
-		default: // strict
-			return ({ current }) => current;
-	}
-};
-
-const matchMapper = (callbackOrDirective) => {
-	switch (typeof callbackOrDirective) {
-		case 'function':
-			return callbackOrDirective;
-		case 'string':
-			return getCallbackByDirective(callbackOrDirective);
-	}
+const getDirectiveMapper = (callback) => (directive) => {
+	return LensUtils.Callback[directive](callback);
 };
 
 /**
  * Like useState(), plus adding listener for render triggering.
  */
-export const useLens = (lens, callback = 'strict', ...callbacks) => {
+export const useLens = (lens, callback = 'change', ...callbacks) => {
 	const [value, setValue] = useState();
 	
 	const all = [callback, ...callbacks];
-	
+
 	const attach = useMemo(() => {
-		const matches = all.map(matchMapper);
+
+		const matches = all.filter(c => typeof c === 'function');
+		const directives = all.filter(c => typeof c === 'string')
+			.map(getDirectiveMapper(() => setValue(lens.get())));
+
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
 				setValue(lens.get());
+				return;
 			}
+
+			directives.forEach(d => d(...args));
 		};
 	}, [lens, ...all]);
-	useLensAttach(lens, attach);
 
-	return [lens.get(), (value) => lens.set(value)];
+	useAttach(lens, attach);
+
+	return [lens.get(), value => lens.set(value)];
 };
 
 const getTimeoutSet = (timeout = 0) => {
@@ -64,7 +57,7 @@ const getTimeoutSet = (timeout = 0) => {
 /**
  * Like useLens(), plus adding throttling.
  */
-export const useLensDebounce = (lens, timeout = 0, callback = 'strict', ...callbacks) => {
+export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
 	const [value, setValue] = useState(lens.get());
 	const debounce = useMemo(() => new LensUtils.Debounce(timeout), []);
 
@@ -73,14 +66,22 @@ export const useLensDebounce = (lens, timeout = 0, callback = 'strict', ...callb
 	const all = [callback, ...callbacks];
 	
 	const attach = useMemo(() => {
-		const matches = all.map(matchMapper);
+
+		const matches = all.filter(c => typeof c === 'function');
+		const directives = all.filter(c => typeof c === 'string')
+			.map(getDirectiveMapper(() => debounce.run(() => setValue(lens.get()), read)));
+
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
 				debounce.run(() => setValue(lens.get()), read);
+				return;
 			}
+
+			directives.forEach(d => d(...args));
 		};
-	}, [lens, read, ...all]);
-	useLensAttach(lens, attach);
+	}, [lens, ...all]);
+
+	useAttach(lens, attach);
 
 	return [value, (v) => {
 		setValue(v);
@@ -91,7 +92,7 @@ export const useLensDebounce = (lens, timeout = 0, callback = 'strict', ...callb
 /**
  * Detected node changes and return changes count
  */
-export const useLensCatch = (lens) => {
+export const useCatch = (lens) => {
 	const [version, setVersion] = useState(0);
 	useLensAttach(lens, () => setVersion(version + 1));
 	return version;
@@ -125,7 +126,6 @@ export const createLensComponent = (component, model) =>
 
 		return React.createElement(component.type || component.prototype, props, children);
 	};
-
 
 /**
  * Implementation lens connection over React.Component.

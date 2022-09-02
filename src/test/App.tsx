@@ -1,6 +1,8 @@
-import { Lens, LensUtils } from "@vovikilelik/lens-ts";
-import React, { Component, useCallback, useState, useRef } from "react";
-import { useLens, useLensDebounce, createLensComponent, getHtmlLikeModel, useLensAttach } from "../react-lens";
+import React, { Component, useRef } from "react";
+
+import { Lens } from "@vovikilelik/lens-ts";
+
+import { useLens, useDebounce, createLensComponent, getHtmlLikeModel } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 
 function Throttling(defaultTimeout) {
@@ -33,7 +35,7 @@ const lens = new Lens<State>(
 lens.go('name').attach(e => console.log(JSON.stringify(lens.get())));
 
 const DebounceInput: React.FC<{lens: Lens<string>}> = ({ lens }) => {
-    const [value, setValue] = useLensDebounce(lens, 1000);
+    const [value, setValue] = useDebounce(lens, 1000);
     return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
@@ -58,7 +60,7 @@ class App extends Component {
     render() {
         const name = lens.go('name');
 		const path = lens.go('multi').go('path');
-		const strict = lens.go('multi').go('path').go('strict');
+		const node = lens.go('multi').go('path').go('strict');
 		const tree = lens.go('multi').go('path').go('tree').go('value');
 
         return (
@@ -83,20 +85,20 @@ class App extends Component {
 				<div>
 					<h1>Multi attach</h1>
 					<button onClick={() => path.set({ strict: Math.random() + '', tree: { value: Math.random() + '' } })}>Path</button>
-					<button onClick={() => strict.set(Math.random() + '')}>Strict</button>
+					<button onClick={() => node.set(Math.random() + '')}>Strict</button>
 					<button onClick={() => tree.set(Math.random() + '')}>Tree</button>
 					<div>===path===</div>
-					<Flow lens={path} title='path' />
-					<Flow lens={strict} title='path' />
-					<Flow lens={tree} title='path' />
+					<Flow lens={path} title='after' />
+					<Flow lens={node} title='after' />
+					<Flow lens={tree} title='after' />
 					<div>===strict===</div>
-					<Flow lens={path} title='strict' />
-					<Flow lens={strict} title='strict' />
-					<Flow lens={tree} title='strict' />
+					<Flow lens={path} title='node' />
+					<Flow lens={node} title='node' />
+					<Flow lens={tree} title='node' />
 					<div>===tree===</div>
-					<Flow lens={path} title='tree' />
-					<Flow lens={strict} title='tree' />
-					<Flow lens={tree} title='tree' />
+					<Flow lens={path} title='before' />
+					<Flow lens={node} title='before' />
+					<Flow lens={tree} title='before' />
 				</div>
 				<div>
 					<h1>Callbacks</h1>
