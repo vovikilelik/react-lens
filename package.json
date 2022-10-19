@@ -1,6 +1,6 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "2.0.0-beta2",
+    "version": "2.0.0-beta3",
     "license": "LGPL-3.0-or-later",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
@@ -23,9 +23,8 @@
     "author": "octopus",
     "contributors": [],
     "dependencies": {
-        "@vovikilelik/lens-ts": "^2.0.0-beta2",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "@vovikilelik/lens-ts": "^2.0.0-beta3",
+		"react": "^17.0.0"
     },
     "devDependencies": {
         "@types/react": "^17.0.49",
