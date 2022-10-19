@@ -13,7 +13,7 @@ export const useAttach = (lens, ...callback) => {
 };
 
 const getDirectiveMapper = (callback) => (directive) => {
-	return LensUtils.Callback[directive](callback);
+	return LensUtils.Callbacks[directive](callback);
 };
 
 /**
@@ -90,15 +90,6 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 };
 
 /**
- * Detected node changes and return changes count
- */
-export const useCatch = (lens) => {
-	const [version, setVersion] = useState(0);
-	useLensAttach(lens, () => setVersion(version + 1));
-	return version;
-};
-
-/**
  * Gettig default get-set mapper for standart Html components.
  */
 export const getHtmlLikeModel = () => ({
@@ -137,12 +128,11 @@ export class LensComponent extends React.Component {
 		const {lens} = this.props;
 		this.state = {value: lens.get()};
 
-		this._lensCallback = this._onLensChanged.bind(this);
+		this._lensCallback = this.onLensChanged.bind(this);
 	}
 
-	_onLensChanged(e) {
-		const {lens} = this.props;
-		this.setState({value: lens.get()});
+	onLensChanged(event, lens) {
+		this.setState({ value: this.props.lens.get() });
 	}
 
 	componentDidMount() {

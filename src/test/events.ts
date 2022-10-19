@@ -46,15 +46,15 @@ const test = () => {
         console.log(e);
     });
 
-    x.attach(LensUtils.Callback.node(e => {
+    x.attach(LensUtils.Callbacks.strict(e => {
         console.log('strict', e);
     }));
 
-    x.go('one').attach(LensUtils.Callback.node(e => {
+    x.go('one').attach(LensUtils.Callbacks.strict(e => {
         console.log('strict one', e);
     }));
     
-    x.go('two').attach(LensUtils.Callback.node(e => {
+    x.go('two').attach(LensUtils.Callbacks.strict(e => {
         console.log('strict two', e);
     }));
 

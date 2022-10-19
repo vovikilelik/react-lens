@@ -5,7 +5,7 @@ import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-ts";
 declare function useAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 
 declare type MatchFunction<T> = (event: AttachEvent<T>, node: Lens<T>) => any;
-declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'change' | 'node' | 'before' | 'after';
+declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'change' | 'strict' | 'before' | 'after';
 declare interface TimeoutSet {
 	read: number;
 	write: number;
@@ -14,8 +14,6 @@ declare interface TimeoutSet {
 declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
 
 declare function useDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
-
-declare function useCatch<T>(lens: Lens<T>): number;
 
 declare interface ModelVector<A, B = A> {
     name: string;
@@ -34,4 +32,6 @@ declare function createLensComponent<L, P = {}>(
     model: Model<L, any, any>
 ): React.FC<P & { lens: Lens<L> }>
 
-declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> { }
+declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
+    protected onLensChanged(event: AttachEvent<L>, lens: Lens<L>): void;
+}

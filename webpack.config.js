@@ -44,7 +44,11 @@ const config = {
         new HtmlWebpackPlugin({
             template: './test/index.html'
         }) // генерация html-файла на основе нашего шаблона
-    ]
+    ],
+
+    optimization: {
+        minimize: false
+    },
 };
 
 module.exports = config;

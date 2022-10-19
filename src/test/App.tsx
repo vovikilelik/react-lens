@@ -92,9 +92,9 @@ class App extends Component {
 					<Flow lens={node} title='after' />
 					<Flow lens={tree} title='after' />
 					<div>===strict===</div>
-					<Flow lens={path} title='node' />
-					<Flow lens={node} title='node' />
-					<Flow lens={tree} title='node' />
+					<Flow lens={path} title='strict' />
+					<Flow lens={node} title='strict' />
+					<Flow lens={tree} title='strict' />
 					<div>===tree===</div>
 					<Flow lens={path} title='before' />
 					<Flow lens={node} title='before' />
