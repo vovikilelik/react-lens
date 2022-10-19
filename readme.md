@@ -4,6 +4,9 @@ It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vo
 * [React-Lens](http://git.vovikilelik.com/Clu/react-lens/wiki/Home-en)
 * [Demo project](http://git.vovikilelik.com/Clu/react-lens-cats)
 
+# Warning
+`react-lens` uses react 18. For react 17 install with `-react17` prefix.
+
 # Start
 ```ts
 /* Lens core */
