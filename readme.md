@@ -32,8 +32,8 @@ const Counter: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
 ```
 `useLens` haves able to customize render trigger
 ```ts
-/* Simple, means: 'path', 'strict' or 'tree' stage */
-const [value, setValue] = useLens(lens, 'path', 'strict');
+/* Simple, means: 'before', 'strict' or 'after' stage */
+const [value, setValue] = useLens(lens, 'before', 'strict');
 
 /* Functional */
 const [value, setValue] = useLens(lens, () => /* condition */);
