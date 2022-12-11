@@ -1,6 +1,6 @@
 import React, { Component, useRef } from "react";
 
-import { Lens } from "@vovikilelik/lens-ts";
+import { Lens } from "@vovikilelik/lens-js";
 
 import { useLens, useDebounce, createLensComponent, getHtmlLikeModel } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";

@@ -1,4 +1,4 @@
-import { Lens, LensUtils } from '@vovikilelik/lens-ts';
+import { Callbacks, Lens, transform } from '@vovikilelik/lens-js';
 
 interface Props {
     world: string;
@@ -40,21 +40,21 @@ const test = () => {
         console.log('root', e);
     });
 
-    const x = lens.go('table').chain(LensUtils.transform(getter, setter));
+    const x = lens.go('table').chain(transform(getter, setter));
 
     x.attach(e => {
         console.log(e);
     });
 
-    x.attach(LensUtils.Callbacks.strict(e => {
+    x.attach(Callbacks.strict(e => {
         console.log('strict', e);
     }));
 
-    x.go('one').attach(LensUtils.Callbacks.strict(e => {
+    x.go('one').attach(Callbacks.strict(e => {
         console.log('strict one', e);
     }));
     
-    x.go('two').attach(LensUtils.Callbacks.strict(e => {
+    x.go('two').attach(Callbacks.strict(e => {
         console.log('strict two', e);
     }));
 
@@ -67,7 +67,7 @@ const test = () => {
 
     console.log(JSON.stringify(store));
     
-    const y = LensUtils.getArray<Ficus>(lens.go('arr'));
+    const y = lens.go('arr').list();
     y.forEach(i => {
         const c = i.get();
         

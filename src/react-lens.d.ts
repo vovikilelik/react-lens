@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-ts";
+import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-js";
 
 declare function useAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 

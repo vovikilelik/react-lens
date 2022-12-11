@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-
-import { LensUtils } from '@vovikilelik/lens-ts';
+import { Callbacks, Debounce } from '@vovikilelik/lens-js';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 /**
  * Add listener to current lens.
@@ -13,7 +12,7 @@ export const useAttach = (lens, ...callback) => {
 };
 
 const getDirectiveMapper = (callback) => (directive) => {
-	return LensUtils.Callbacks[directive](callback);
+	return Callbacks[directive](callback);
 };
 
 /**
@@ -41,8 +40,10 @@ export const useLens = (lens, callback = 'change', ...callbacks) => {
 	}, [lens, ...all]);
 
 	useAttach(lens, attach);
+	
+	const setter = useCallback(value => lens.set(value), [lens]);
 
-	return [lens.get(), value => lens.set(value)];
+	return [lens.get(), setter];
 };
 
 const getTimeoutSet = (timeout = 0) => {
@@ -59,7 +60,7 @@ const getTimeoutSet = (timeout = 0) => {
  */
 export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
 	const [value, setValue] = useState(lens.get());
-	const debounce = useMemo(() => new LensUtils.Debounce(timeout), []);
+	const debounce = useMemo(() => new Debounce(timeout), []);
 
 	const { read, write } = getTimeoutSet(timeout);
 	
