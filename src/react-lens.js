@@ -20,6 +20,7 @@ const getDirectiveMapper = (callback) => (directive) => {
  */
 export const useLens = (lens, callback = 'change', ...callbacks) => {
 	const [value, setValue] = useState();
+	const [initFlag, setInitFlag] = useState();
 	
 	const all = [callback, ...callbacks];
 
@@ -27,11 +28,15 @@ export const useLens = (lens, callback = 'change', ...callbacks) => {
 
 		const matches = all.filter(c => typeof c === 'function');
 		const directives = all.filter(c => typeof c === 'string')
-			.map(getDirectiveMapper(() => setValue(lens.get())));
+			.map(getDirectiveMapper(() => {
+				setValue(lens.get());
+				setInitFlag(true);
+			}));
 
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
 				setValue(lens.get());
+				setInitFlag(true);
 				return;
 			}
 
@@ -59,7 +64,9 @@ const getTimeoutSet = (timeout = 0) => {
  * Like useLens(), plus adding throttling.
  */
 export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
-	const [value, setValue] = useState(lens.get());
+	const [value, setValue] = useState();
+	const [initFlag, setInitFlag] = useState();
+	
 	const debounce = useMemo(() => new Debounce(timeout), []);
 
 	const { read, write } = getTimeoutSet(timeout);
@@ -70,11 +77,17 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 
 		const matches = all.filter(c => typeof c === 'function');
 		const directives = all.filter(c => typeof c === 'string')
-			.map(getDirectiveMapper(() => debounce.run(() => setValue(lens.get()), read)));
+			.map(getDirectiveMapper(() => debounce.run(() => {
+				setValue(lens.get());
+				setInitFlag(true);
+			}, read)));
 
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
-				debounce.run(() => setValue(lens.get()), read);
+				debounce.run(() => {
+					setValue(lens.get());
+					setInitFlag(true);
+				}, read);
 				return;
 			}
 
@@ -84,7 +97,7 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 
 	useAttach(lens, attach);
 
-	return [value, (v) => {
+	return [lens.get(), (v) => {
 		setValue(v);
 		debounce.run(() => lens.set(v), write);
 	}];
