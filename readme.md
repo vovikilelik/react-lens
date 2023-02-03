@@ -39,7 +39,7 @@ const [value, setValue] = useLens(lens, 'before', 'strict');
 const [value, setValue] = useLens(lens, () => /* condition */);
 
 /* Or mixed */
-const [value, setValue] = useLens(lens, () => true, 'tree');
+const [value, setValue] = useLens(lens, () => true, 'strict');
 ```
 > For more information about event model see [lens-js](https://www.npmjs.com/package/@vovikilelik/lens-js) repository
 

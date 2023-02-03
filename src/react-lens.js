@@ -46,7 +46,10 @@ export const useLens = (lens, callback = 'change', ...callbacks) => {
 
 	useAttach(lens, attach);
 	
-	const setter = useCallback(value => lens.set(value), [lens]);
+	const setter = useCallback(value => {
+		setValue(value); /* Need for react sync for input fields (caret jump bug) */
+		lens.set(value);
+	}, [lens]);
 
 	return [lens.get(), setter];
 };
@@ -64,7 +67,7 @@ const getTimeoutSet = (timeout = 0) => {
  * Like useLens(), plus adding throttling.
  */
 export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
-	const [value, setValue] = useState();
+	const [value, setValue] = useState(lens.get());
 	const [initFlag, setInitFlag] = useState();
 	
 	const debounce = useMemo(() => new Debounce(timeout), []);
@@ -96,11 +99,13 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 	}, [lens, ...all]);
 
 	useAttach(lens, attach);
+	
+	const setter = useCallback(value => {
+		setValue(value); /* Need for react sync for input fields (caret jump bug) */
+		debounce.run(() => lens.set(value), write);
+	}, [debounce, lens]);
 
-	return [lens.get(), (v) => {
-		setValue(v);
-		debounce.run(() => lens.set(v), write);
-	}];
+	return [lens.get(), setter];
 };
 
 /**
