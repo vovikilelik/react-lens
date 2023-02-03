@@ -7,7 +7,7 @@ It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vo
 # Start
 ```ts
 /* Lens core */
-import { Lens, ... } from '@vovikilelik/lens-ts';
+import { Lens, createLens, Callbacks, ... } from '@vovikilelik/lens-js';
 
 /* React implementation */
 import { useLens, ...and more } from '@vovikilelik/react-lens';
@@ -17,7 +17,7 @@ import { useLens, ...and more } from '@vovikilelik/react-lens';
 You can create Lens component with using `useLens()` hook, whitch use like `useState()`
 
 ```ts
-import { Lens } from "@vovikilelik/lens-ts";
+import { Lens } from "@vovikilelik/lens-js";
 import { useLens } from "@vovikilelik/react-lens";
 
 const Counter: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
