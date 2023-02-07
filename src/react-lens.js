@@ -19,8 +19,12 @@ const getDirectiveMapper = (callback) => (directive) => {
  * Like useState(), plus adding listener for render triggering.
  */
 export const useLens = (lens, callback = 'change', ...callbacks) => {
-	const [value, setValue] = useState();
+	const [value, setValue] = useState(lens.get());
 	const [initFlag, setInitFlag] = useState();
+	
+	useEffect(() => {
+		setValue(lens.get());
+	}, [lens]);
 	
 	const all = [callback, ...callbacks];
 
@@ -51,7 +55,7 @@ export const useLens = (lens, callback = 'change', ...callbacks) => {
 		lens.set(value);
 	}, [lens]);
 
-	return [lens.get(), setter];
+	return [value, setter];
 };
 
 const getTimeoutSet = (timeout = 0) => {
@@ -69,6 +73,10 @@ const getTimeoutSet = (timeout = 0) => {
 export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
 	const [value, setValue] = useState(lens.get());
 	const [initFlag, setInitFlag] = useState();
+	
+	useEffect(() => {
+		setValue(lens.get());
+	}, [lens]);
 	
 	const debounce = useMemo(() => new Debounce(timeout), []);
 
@@ -105,7 +113,7 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 		debounce.run(() => lens.set(value), write);
 	}, [debounce, lens]);
 
-	return [lens.get(), setter];
+	return [value, setter];
 };
 
 /**
