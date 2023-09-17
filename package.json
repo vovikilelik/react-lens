@@ -1,6 +1,6 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "2.0.17",
+    "version": "2.0.18",
     "license": "LGPL-3.0-or-later",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
@@ -23,7 +23,7 @@
     "author": "octopus",
     "contributors": [],
     "dependencies": {
-        "@vovikilelik/lens-js": "^2.3.6"
+        "@vovikilelik/lens-js": "^2.3.7"
     },
 	"peerDependencies": {
 		"react": ">=17.0.0",
@@ -43,7 +43,7 @@
         "start": "live-server",
         "build": "webpack --mode development"
     },
-    "homepage": "http://git.dev-store.xyz/Clu/react-lens/wiki",
+    "homepage": "http://wiki.dev-store.ru/react-lens/",
     "repository": {
         "type": "git",
         "url": "http://git.dev-store.xyz/Clu/react-lens.git"

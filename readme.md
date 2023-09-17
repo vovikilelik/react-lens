@@ -1,28 +1,29 @@
 It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
 
-# Wiki
-* [React-Lens](http://git.dev-store.xyz/Clu/react-lens/wiki/Home-en)
+# Links
+* [Wiki](http://wiki.dev-store.ru/react-lens/)
+* [Repo](http://git.dev-store.xyz/Clu/react-lens/)
 
 # Instalation
 ```
 npm i @vovikilelik/react-lens
 ```
 
-# Uses
+# Example
 ```ts
 import { useLens } from "@vovikilelik/react-lens";
 import { createLens } from "@vovikilelik/lens-js";
 
-const lensNode = createLens('Hello!');
+const store = createLens(0);
 
-const Component: React.FC = () => {
-	const [state, setState] = useLens(lensNode);
+const Counter: React.FC = () => {
+  const [count, setCount] = useLens(store);
 	
-	return (
-		<div>
-			{state}
-		</div>
-	);
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      { count }
+    </button>
+  );
 }
 ```
 
@@ -42,16 +43,21 @@ import { Lens, createLens } from "@vovikilelik/lens-js";
 import { useLens } from "@vovikilelik/react-lens";
 
 /* Component with lens prop as value */
-const Counter: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
-    const [count, setCount] = useLens(lens);
-    return <button onClick={() => setCount(count + 1)}>{ count }</button>
+const Counter: React.FC<{ value: Lens<number> }> = ({ value }) => {
+  const [count, setCount] = useLens(lens);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      { count }
+    </button>
+  );
 }
 
 /* uses */
 const Form: React.FC = () => {
 	/* Creation dynamic state */
-	const lensNode = useMemo(() => createLens(0), []);
-	return <Counter lens={lensNode} />
+	const localStore = useMemo(() => createLens(0), []);
+	return <Counter value={localStore} />
 }
 ```
 
