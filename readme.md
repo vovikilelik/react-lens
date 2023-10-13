@@ -36,6 +36,31 @@ const Counter: React.FC = () => {
 
 # Examples
 
+## Functional extending
+
+```ts
+const store = createLens({})
+  .extends({ message: 'Hello' })
+  .extends(node => {
+	  sayHello: name => `${node.message.get()} ${name}`
+  });
+
+store.sayHello('Martin');  // Hello Martin!
+```
+
+## OOP Extending
+```ts
+/* Create child of Lens instance */
+export class MyCar extends Lens<ICar> {
+	public move() { ... }
+}
+
+/* Uses */
+/* Create MyCar prototype */
+const carState = createLens({ ... }, MyCar);
+carState.move();
+```
+
 ## Lens as dynamic state
 
 ```ts
@@ -80,28 +105,6 @@ const Basket: React.FC<{ lens: Lens<IBasket> }> = ({ lens }) => {
 /* Uses */
 const Form: React.FC = () => {
 	return <Basket lens={state.go('basket')} />
-}
-```
-## Extending
-```ts
-import { Lens } from "@vovikilelik/lens-js";
-
-/* Create child of Lens instance */
-export class MyCar extends Lens<ICar> {
-	public move() { ... }
-}
-
-/* Any component (for example) */
-const Car: React.FC<{ lens: MyCar }> = () => {
-	return <Button onClick={lens.move} />
-}
-
-/* Uses */
-/* Create MyCar prototype */
-const carState = createLens({ ... }, MyCar);
-
-const Form: React.FC = () => {
-	return <Car lens={carState} />
 }
 ```
 
