@@ -43,9 +43,9 @@
         "start": "live-server",
         "build": "webpack --mode development"
     },
-    "homepage": "http://wiki.dev-store.ru/react-lens/",
+    "homepage": "https://wiki.dev-store.ru/react-lens/",
     "repository": {
         "type": "git",
-        "url": "http://git.dev-store.xyz/Clu/react-lens.git"
+        "url": "https://github.com/vovikilelik/react-lens"
     }
 }

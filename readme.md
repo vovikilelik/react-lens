@@ -1,19 +1,22 @@
 It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
 
-# Links
+# Owerview
+`react-lens` is a functional state manager for ReactJS. The whole state is divided into separate models. Each model can be associated with a atom or part of a shared state. All models are inherited from the base model, which already has most of the necessary functions, but you can extend it if necessary.
+
+At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
+
+## Links
 * [Wiki](http://wiki.dev-store.ru/react-lens/)
 * [Repo](http://git.dev-store.xyz/Clu/react-lens/)
 
-# Instalation
+## Instalation
 ```
 npm i @vovikilelik/react-lens
 ```
 
 # Example
+The `createLens()` utility Creates a model. The `useLens()` hook will create a subscription to changes in the model and guarantee that the component will be redrawn if the model has changed. It is used in the same way as the built-in ReactJS `useState()`.
 ```ts
-import { useLens } from "@vovikilelik/react-lens";
-import { createLens } from "@vovikilelik/lens-js";
-
 const store = createLens(0);
 
 const Counter: React.FC = () => {
@@ -27,28 +30,34 @@ const Counter: React.FC = () => {
 }
 ```
 
-# Features
-* Static and dynamic state values
-* Support tree structures
-* Multplatform supporting
-* Async changing and throttling
-* Extending (Node as controller)
+# Main Features
+* Global state definition
+* Local (Dynamic) state definition
+* Nested state
+* Dedouncing and throttling
+* Extending
+* Incapsulation
+* Typings
 
-# Examples
+# Uses
 
-## Functional extending
+## Extending
+The `react-lens` model can be extended with two approaches: functional and OOP.
 
+### Functional Way
+For expansion in the functional approach, the `extends()` method is used. It is passed either an object that will be transformed into state nodes or a function that will be combined with a common prototype.
 ```ts
 const store = createLens({})
   .extends({ message: 'Hello' })
   .extends(node => {
-	  sayHello: name => `${node.message.get()} ${name}`
+	  sayHello: name => `${node.message} ${name}`
   });
 
 store.sayHello('Martin');  // Hello Martin!
 ```
 
-## OOP Extending
+### OOP Way
+For expansion in the OOP approach, class notation is used.
 ```ts
 /* Create child of Lens instance */
 export class MyCar extends Lens<ICar> {
@@ -61,60 +70,83 @@ const carState = createLens({ ... }, MyCar);
 carState.move();
 ```
 
-## Lens as dynamic state
+## Global And Local State
+State models can be global and accessible from anywhere, or relate only to certain components.
+
+### Global state
+```ts
+export const global = createLens({ ... });
+```
+You can split one state into several parts and export them separately. This will not lead to an error because each model is a `singleton`.
 
 ```ts
-import { Lens, createLens } from "@vovikilelik/lens-js";
-import { useLens } from "@vovikilelik/react-lens";
+const global = createLens({ form: {}, auth: {} });
 
-/* Component with lens prop as value */
-const Counter: React.FC<{ value: Lens<number> }> = ({ value }) => {
-  const [count, setCount] = useLens(lens);
+export const form = global.go('form');
+export const auth = global.go('auth');
+```
+But we recommend just using multiple states for different logical parts of programs. This will increase the performance of the application.
 
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      { count }
-    </button>
-  );
+### Local (Dynamic) State
+`react-lens` does not use the global scope. Models can be declared directly in components.
+```ts
+const Form: React.FC = () => {
+  const localStore = useMemo(() => createLens({}), []);
+	
+  ...
+}
+```
+Also, models can be passed to other components as parameters. To do this, you also need to use the `useLens` hook.
+
+```ts
+const Person: React.FC<{ value: Lens }> = ({ value }) => {
+  const [person] = useLens(value);
+  return <>{person.name}</>;
 }
 
-/* uses */
 const Form: React.FC = () => {
-	/* Creation dynamic state */
-	const localStore = useMemo(() => createLens(0), []);
-	return <Counter value={localStore} />
+  const localStore = useMemo(() => createLens({ name: 'Tom' }), []);
+  return <Person value={localStore.go('name')} />;
 }
 ```
 
-## Tree state structure
+### Nested State
+Each model has standard methods for accessing nested objects - this is the `go()` method. However, there is another way to define nested models as object fields. This can be done using the `extends` method by passing a simple object there, which will be converted into nested models.
+
+#### Default way
 ```ts
-/* Any deep static state (for example) */
 const state = createLens({ basket: { apple: { color: 'red' } } });
 
-/* Any Apple component */
-const Apple: React.FC<{ lens: Lens<IApple> }> = ({ lens }) => {
+const Apple: React.FC<{ lens: Lens }> = ({ lens }) => {
 	const [color] = useLens(lens.go('color'));
 	return <>Apple is {color}</>
 }
 
-/* Any Basket component */
-const Basket: React.FC<{ lens: Lens<IBasket> }> = ({ lens }) => {
+const Basket: React.FC<{ lens: Lens }> = ({ lens }) => {
 	return <Apple lens={lens.go('apple')} />
 }
 
-/* Uses */
 const Form: React.FC = () => {
 	return <Basket lens={state.go('basket')} />
 }
 ```
 
-## Catching changes
+#### Field-style Way
 ```ts
-import { useLens, useAttach } from "@vovikilelik/react-lens";
-import { Lens, createLens } from "@vovikilelik/lens-js";
+const state = createLens({})
+  .extends({ field: 'Hello!' });
 
+const Form: React.FC = () => {
+  return <>{state.field}</>
+}
+```
+
+## Catching changes
+react-lens allows you to track changes in models. This happens automatically when you use the `useLens()` hook. However, you can manage subscriptions manually using the built-in functions in the model. The `useAttach()` hook will create a subscription to changes in the model.
+
+```ts
 const Input: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
-	const [value, setValue] = useLens(lens);
+	const [value, setValue] = useLens(lens);  // Automatic catching and rendering
 	return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
@@ -133,9 +165,8 @@ const Form: React.FC = () => {
 ```
 
 ## Debounce
+Creating an input field for asynchronous search is simple!
 ```ts
-import { useDebounce, useAttach } from "@vovikilelik/react-lens";
-
 /* Input with delay */
 const DebounceInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
 	const [value, setValue] = useDebounce(lens, 1000);
@@ -175,13 +206,8 @@ const Form: React.FC = () => {
 ## Creation statefull components
 You can create an own class component extending `LensComponent<L, P, S>`, like `React.Component<P, S>`, where `L` is type of `Lens` node.
 ```ts
-import { LensComponent } from "@vovikilelik/react-lens";
+export class Counter extends LensComponent {
 
-interface Props {
-    className?: string;
-}
-
-export class Counter extends LensComponent<number, Props> {
     public render() {
         const {lens} = this.props;
         const {value} = this.state;
@@ -192,4 +218,3 @@ export class Counter extends LensComponent<number, Props> {
 /* uses */
 <Counter lens={/* Your counter lens */} />
 ```
-
