@@ -1,27 +1,27 @@
-It is the React implementation for [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
+It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js). See for more functionality.
 
-# Owerview
+# Abstract
 `react-lens` is a functional state manager for ReactJS. The whole state is divided into separate models. Each model can be associated with a atom or part of a shared state. All models are inherited from the base model, which already has most of the necessary functions, but you can extend it if necessary.
 
 At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
 
 ## Links
-* [Wiki](http://wiki.dev-store.ru/react-lens/)
-* [Repo](http://git.dev-store.xyz/Clu/react-lens/)
+* [Wiki](https://wiki.dev-store.xyz/react-lens/) for more information
+* [GIT Repository](https://git.dev-store.xyz/Clu/react-lens/) for latest version
 
 ## Instalation
 ```
 npm i @vovikilelik/react-lens
 ```
 
-# Example
-The `createLens()` utility Creates a model. The `useLens()` hook will create a subscription to changes in the model and guarantee that the component will be redrawn if the model has changed. It is used in the same way as the built-in ReactJS `useState()`.
+## Example
+The `createStore()` utility Creates a model. The `useLens()` hook will create a subscription to changes in the model and guarantee that the component will be redrawn if the model has changed. It is used in the same way as the built-in ReactJS `useState()`.
 ```ts
-const store = createLens(0);
+const store = createStore(0);
 
 const Counter: React.FC = () => {
   const [count, setCount] = useLens(store);
-	
+  
   return (
     <button onClick={() => setCount(count + 1)}>
       { count }
@@ -30,7 +30,10 @@ const Counter: React.FC = () => {
 }
 ```
 
-# Main Features
+# Owerview
+`react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js). See it for more functionality.
+
+## Main Futures
 * Global state definition
 * Local (Dynamic) state definition
 * Nested state
@@ -41,165 +44,221 @@ const Counter: React.FC = () => {
 
 # Uses
 
-## Extending
-The `react-lens` model can be extended with two approaches: functional and OOP.
+## State Definition Ways
+`react-lens` allows you to create a global and local state. It will depend on your needs.
+
+The global state is well suited for the shared state of the application. Local is suitable for implementing complex components or shared components distributed between your projects.
+
+### Global State Definition
+To create a global state, the `createStore()` method is used.
+```ts
+export const store = createStore({ /* Initial data */ });
+```
+>  This method has more functionality, see [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js)
+#### Local State Definition
+A local state can be created using the same method - `createStore()`. However, there is an easier way using hook `useLocalStore()`. It has the same functionality as the `createStore()` method.
+```ts
+cont initData = { message: 'Hello!' };
+
+const Component: React.FC = () => {
+  const localStore = useLocalStore(initData);
+  ...
+}
+```
+There are other hooks to simplify the development of components.
+The `useStaticLocalStore()` hook will not be updated when the data used during creation changes.
+
+```ts
+const Component: React.FC = () => {
+  const localStore = useStaticLocalStore({ message: 'No updating' });
+  ...
+}
+```
+Hook `useDerivedLocalStore` will monitor the change in the state of the parent component.
+```ts
+const Component: React.FC<{ parentValue: any }> = ({ parentValue }) => {
+  const localStore = useDerivedLocalStore(parentValue);
+  ...
+}
+```
+
+##  Model Extending
+
+The `react-lens` models can be extended with two approaches: functional and Object-oriented. These methods are slightly different, but in general they give an equivalent result.
 
 ### Functional Way
 For expansion in the functional approach, the `extends()` method is used. It is passed either an object that will be transformed into state nodes or a function that will be combined with a common prototype.
 ```ts
-const store = createLens({})
+const store = createStore({})
   .extends({ message: 'Hello' })
   .extends(node => {
-	  sayHello: name => `${node.message} ${name}`
+    sayHello: name => `${node.message} ${name}`
   });
 
 store.sayHello('Martin');  // Hello Martin!
 ```
 
-### OOP Way
-For expansion in the OOP approach, class notation is used.
+### Nested Models Definition
+The functional method makes it easy to embed child models. However, this is only a convenient conversion. Any nested models can still be accessed using the `go()` method.
+
 ```ts
-/* Create child of Lens instance */
-export class MyCar extends Lens<ICar> {
-	public move() { ... }
+const message = createStore('Hello!');
+
+const store = createStore({})
+  .extends({ message });
+
+store.message.get();  // Hello!
+store.go('message').get();  // Hello!
+```
+
+### Object-oriented Way
+For expansion in the Object-oriented approach, class notation is used. A custom class can be inherited from `Lens`class or one of its heirs, like `Store`.
+```ts
+/* Create child of one of Lens instance */
+class MyCar extends Store {
+  public move() { ... }
 }
 
-/* Uses */
-/* Create MyCar prototype */
-const carState = createLens({ ... }, MyCar);
+/* Create store with MyCar prototype */
+const carState = createStore({ ... }, MyCar);
 carState.move();
 ```
-
-## Global And Local State
-State models can be global and accessible from anywhere, or relate only to certain components.
-
-### Global state
+The same can be done when declaring a local state.
 ```ts
-export const global = createLens({ ... });
-```
-You can split one state into several parts and export them separately. This will not lead to an error because each model is a `singleton`.
+class MyCar extends Store { ... }
 
-```ts
-const global = createLens({ form: {}, auth: {} });
-
-export const form = global.go('form');
-export const auth = global.go('auth');
-```
-But we recommend just using multiple states for different logical parts of programs. This will increase the performance of the application.
-
-### Local (Dynamic) State
-`react-lens` does not use the global scope. Models can be declared directly in components.
-```ts
-const Form: React.FC = () => {
-  const localStore = useMemo(() => createLens({}), []);
-	
+const Component: React.FC = () => {
+  const localStore = useLocalStore(initData, MyCar);
+  localStore.move();
   ...
 }
 ```
-Also, models can be passed to other components as parameters. To do this, you also need to use the `useLens` hook.
-
+### Atoms
+`react-lens` does not use the global scope. This allows you to create as many small states as you want. We recommend using this approach. This will simplify the work with data and improve the performance of the application.
 ```ts
-const Person: React.FC<{ value: Lens }> = ({ value }) => {
-  const [person] = useLens(value);
-  return <>{person.name}</>;
-}
-
-const Form: React.FC = () => {
-  const localStore = useMemo(() => createLens({ name: 'Tom' }), []);
-  return <Person value={localStore.go('name')} />;
-}
-```
-
-### Nested State
-Each model has standard methods for accessing nested objects - this is the `go()` method. However, there is another way to define nested models as object fields. This can be done using the `extends` method by passing a simple object there, which will be converted into nested models.
-
-#### Default way
-```ts
-const state = createLens({ basket: { apple: { color: 'red' } } });
-
-const Apple: React.FC<{ lens: Lens }> = ({ lens }) => {
-	const [color] = useLens(lens.go('color'));
-	return <>Apple is {color}</>
-}
-
-const Basket: React.FC<{ lens: Lens }> = ({ lens }) => {
-	return <Apple lens={lens.go('apple')} />
-}
-
-const Form: React.FC = () => {
-	return <Basket lens={state.go('basket')} />
-}
-```
-
-#### Field-style Way
-```ts
-const state = createLens({})
-  .extends({ field: 'Hello!' });
-
-const Form: React.FC = () => {
-  return <>{state.field}</>
-}
+export const options = createState({ theme: 'white' });
+export const auth = createState({ username: 'Tom' });
+...
 ```
 
 ## Catching changes
-react-lens allows you to track changes in models. This happens automatically when you use the `useLens()` hook. However, you can manage subscriptions manually using the built-in functions in the model. The `useAttach()` hook will create a subscription to changes in the model.
+
+### Automatic catching
+`react-lens` allows you to track changes in models. This happens automatically when you use the `useLens()` hook.
 
 ```ts
-const Input: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
-	const [value, setValue] = useLens(lens);  // Automatic catching and rendering
-	return <input value={value} onChange={e => setValue(e.target.value)} />
+const Component: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
+  const [value, setValue] = useLens(lens);  // Automatic catching and rendering
+  ...
 }
+```
+It is worth noting that the hooks for creating a local state, like `useLocalStore()`, will not update the component if the state changes. In order for the component to respond to changes, you can use the `useLens()` hook.
 
-/* Uses */
-const Form: React.FC = () => {
-	const state = useMemo(() => createLens(''), []);
-	
-	/* Create standard callback */
-	const callback = useCallback(() => { ... });
-	
-	/* Subscribe to lens changing with callback */
-	useAttach(state, callback);
-	
-	return <Input lens={state} />
+```ts
+const Component: React.FC = () => {
+  const localStore = useLocalStore(initData);
+  
+  /* Needs for updating component when localStore changed */
+  const [value, setValue] = useLens(localStore);
+  ...
 }
 ```
 
-## Debounce
+However, you can manage subscriptions manually using the built-in functions in the model. The `useSubscribe()` hook will create a subscription to changes in the model.
+
+```ts
+const Component: React.FC = () => {
+  const localStore = useLocalStore(initData);
+  
+  const callback = useCallback(() => { /* You reaction on changes */ })
+  useSubscribe(localStore, callback);
+  ...
+}
+```
+
+### Catching nested stores
+
+It doesn't really matter how many child models you use. There is one rule - use `useLens()` where you need to update the component.
+```ts
+const Text: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
+  const [value] = useLens(lens);  // Child will be updated if store changed
+  return <>{value}</>
+}
+
+const Random: React.FC = () => {
+  const localStore = useLocalStore(0);  // Store don`t triggering update
+  
+  return (
+    <button onClick={() => localStore.set(Math.random())}>
+      <Text lens={localStore} />
+    </button>
+  );
+}
+```
+> Note that it makes no sense for us to update the `Random` component.
+
+### Custom Triggers
+
+In cases where we don't need extra updates, we can set special triggers that will prevent unnecessary updates. This is the functionality of [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js), see it for more information.
+
+Triggers are specified in the `useLens()` hook by the second and subsequent arguments like `useLens(lens, ...triggers)`.
+
+A trigger is a listener-like function that returns 3 values: `true`, `false` or `undefined`.
+
+```ts
+const store = createStore(0);
+
+const evenTrigger: Trigger<number> = (event, node) => node.get() % 2 === 0;
+
+const Component: React.FC = () => {
+  const [value] = useLens(store, evenTrigger);
+  return <>{value}</>
+}
+```
+
+It is worth noting that useLens() already uses Trigger.object by default. Don't forget to specify it if you need it.
+
+```ts
+const [value] = useLens(store, Triggers.object, evenTrigger);
+```
+
+Some system triggers have been replaced with their string counterparts: `object`, `path`, `subtree`, `strict` and `all`.
+
+```ts
+const [value] = useLens(store, 'object', evenTrigger);
+```
+
+The order of the tierggers matters. `react-lens` will stop processing all other triggers as soon as it encounters the first one, which returns `true` or `false`. If the trigger returns `false`, then `react-lens` considers that the component should not be updated and stops further processing. The `undefined` value will not update the component, but will transfer control to the next trigger.
+
+```ts
+useLens(store, () => { /* triggered */ }, () => true, () => { /* not triggered */ });
+useLens(store, () => { /* triggered */ }, () => false, () => { /* not triggered */ });
+```
+
+All system triggers will return `undefined` if they failed validation and pass control to the next trigger.
+
+## Utils
+
+Some utilities are described in [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js), see it for more information.
+
+### useLensDebounce()
+The `useLensDebounce()` hook allows you to create a bidirectional listener that will update the state with a delay. It works the same way as `useLens()`.
+
 Creating an input field for asynchronous search is simple!
+
 ```ts
-/* Input with delay */
 const DebounceInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
-	const [value, setValue] = useDebounce(lens, 1000);
-	return <input value={value} onChange={e => setValue(e.target.value)} />
+  const [value, setValue] = useLensDebounce(lens, 1000);
+  return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
-/* Uses */
 const Form: React.FC = () => {
-	const lensNode = useMemo(() => createLens(''), []);
-	useAttach(lensNode, doRequestFunction);
-	
-	return <DebounceInput lens={lensNode} />
-}
-```
-
-## Manual setting end getting values
-Functional of [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
-```ts
-const state = createLens('Hello!');
-
-const Form: React.FC = () => {
-	useLens(state); // For triggering changes
-
-	const callback = useCallback(() => {
-		state.set('World!'); // Set value
-	});
-	
-	return (
-		<Button onClick={lensNode}>
-			{/* Get value */}
-			{state.get()}
-		</Button>
-	)
+  const localStore = createStore('');
+  
+  const doResponse = useCallback(() => fetch(...));
+  useSubscribe(lensNode, doResponse);
+  
+  return <DebounceInput lens={localStore} />
 }
 ```
 

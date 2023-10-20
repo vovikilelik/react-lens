@@ -27,51 +27,7 @@ type Store = {
 };
 
 const test = () => {
-    const store = { lens: {arr: [], basket: '', table: {apple: 0, orange: ''}} };
-
-    const lens = new Lens<Store>(() => store.lens, (value, e) => {store.lens = value; e()});
     
-    console.log(JSON.stringify(store));
-    
-    const getter = (v: Table) => ({one: v.apple, two: v.orange});
-    const setter = (v: Ficus) => ({apple: v.one, orange: v.two});
-
-    lens.attach(e => {
-        console.log('root', e);
-    });
-
-    const x = lens.go('table').chain(transform(getter, setter));
-
-    x.attach(e => {
-        console.log(e);
-    });
-
-    x.attach(Callbacks.strict(e => {
-        console.log('strict', e);
-    }));
-
-    x.go('one').attach(Callbacks.strict(e => {
-        console.log('strict one', e);
-    }));
-    
-    x.go('two').attach(Callbacks.strict(e => {
-        console.log('strict two', e);
-    }));
-
-    console.log('-------------');
-    x.go('one').set(111);
-    console.log('-------------');
-    x.go('two').set('aaa');
-    console.log('-------------');
-    x.set({one: 9, two: 'x'});
-
-    console.log(JSON.stringify(store));
-    
-    const y = lens.go('arr').list();
-    y.forEach(i => {
-        const c = i.get();
-        
-    });
 }
 
 test();

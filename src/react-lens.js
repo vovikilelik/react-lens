@@ -1,54 +1,80 @@
-import { Callbacks, Debounce } from '@vovikilelik/lens-js';
+import { Debounce, Store, Triggers, createStore } from '@vovikilelik/lens-js';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+
 
 /**
  * Add listener to current lens.
  */
-export const useAttach = (lens, ...callback) => {
+export const useSubscribe = (lens, ...callbacks) => {
 	useEffect(() => {
-		callback.forEach(c => lens.attach(c));
-		return () => callback.forEach(c => lens.detach(c));
-	}, [lens, ...callback]);
+		const unsubscribers = callbacks.map(callback => lens.subscribe(callback));
+		return  () => unsubscribers.forEach(unsubscriber => unsubscriber());
+	}, [lens, ...callbacks]);
 };
 
-const getDirectiveMapper = (callback) => (directive) => {
-	return Callbacks[directive](callback);
-};
+export const useLocalStore = (initData, instance = Store) => {
+	return useMemo(() => createStore(initData, instance), [initData, instance]);
+}
+
+export const useStaticLocalStore = (initData, instance) => {
+	const localData = useMemo(() => initData, []);
+	return useLocalStore(localData, instance);
+}
+
+export const useDerivedLocalStore = (initData, instance) => {
+	const store = useStaticLocalStore(initData, instance);
+
+	useEffect(() => {
+		store.set(initData);
+	}, [store, initData]);
+
+	return store
+}
+
+const _createMatches = (triggersOrDirectives) =>
+	triggersOrDirectives
+		.map(t => {
+			switch (typeof t) {
+				case 'string':
+					if (!Triggers[t])
+						return (() => true);
+
+					return (...args) => {
+						const result = Triggers[t](...args);
+
+						if (!result)
+							return undefined;
+
+						return result;
+					}
+				case 'function':
+					return t;
+			}
+		})
+		.filter(t => t);
 
 /**
  * Like useState(), plus adding listener for render triggering.
  */
-export const useLens = (lens, callback = 'change', ...callbacks) => {
+export const useLens = (lens, trigger = 'object', ...triggers) => {
 	const [value, setValue] = useState(lens.get());
-	const [initFlag, setInitFlag] = useState();
 	
 	useEffect(() => {
 		setValue(lens.get());
 	}, [lens]);
 	
-	const all = [callback, ...callbacks];
-
 	const attach = useMemo(() => {
-
-		const matches = all.filter(c => typeof c === 'function');
-		const directives = all.filter(c => typeof c === 'string')
-			.map(getDirectiveMapper(() => {
-				setValue(lens.get());
-				setInitFlag(true);
-			}));
+		const matches = _createMatches([trigger, ...triggers]);
 
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
 				setValue(lens.get());
-				setInitFlag(true);
 				return;
 			}
-
-			directives.forEach(d => d(...args));
 		};
-	}, [lens, ...all]);
+	}, [lens, trigger, ...triggers]);
 
-	useAttach(lens, attach);
+	useSubscribe(lens, attach);
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
@@ -67,46 +93,36 @@ const getTimeoutSet = (timeout = 0) => {
 	}
 };
 
+export const useDebounce = (timeout) => {
+	return useMemo(() => new Debounce(timeout), []);
+}
+
 /**
  * Like useLens(), plus adding throttling.
  */
-export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks) => {
+export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...triggers) => {
 	const [value, setValue] = useState(lens.get());
-	const [initFlag, setInitFlag] = useState();
 	
 	useEffect(() => {
 		setValue(lens.get());
 	}, [lens]);
 	
-	const debounce = useMemo(() => new Debounce(timeout), []);
+	const debounce = useDebounce(timeout);
 
 	const { read, write } = getTimeoutSet(timeout);
 	
-	const all = [callback, ...callbacks];
-	
 	const attach = useMemo(() => {
-
-		const matches = all.filter(c => typeof c === 'function');
-		const directives = all.filter(c => typeof c === 'string')
-			.map(getDirectiveMapper(() => debounce.run(() => {
-				setValue(lens.get());
-				setInitFlag(true);
-			}, read)));
+		const matches = _createMatches([trigger, ...triggers]);
 
 		return (...args) => {
 			if (matches.some(m => m(...args))) {
-				debounce.run(() => {
-					setValue(lens.get());
-					setInitFlag(true);
-				}, read);
+				debounce.run(() => setValue(lens.get()), read);
 				return;
 			}
-
-			directives.forEach(d => d(...args));
 		};
-	}, [lens, ...all]);
+	}, [lens, trigger, ...triggers]);
 
-	useAttach(lens, attach);
+	useSubscribe(lens, attach);
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
@@ -117,38 +133,10 @@ export const useDebounce = (lens, timeout = 0, callback = 'change', ...callbacks
 };
 
 /**
- * Gettig default get-set mapper for standart Html components.
- */
-export const getHtmlLikeModel = () => ({
-		getter: {name: 'value', mapper: (v) => v},
-		setter: {name: 'onChange', mapper: (e) => e.target.value}
-	});
-
-const _defaultMapper = (value) => value;
-
-/**
- * Covering custom component
- */
-export const createLensComponent = (component, model) =>
-	({ lens, children, ...rest }) => {
-		const [value, setValue] = useLens(lens);
-		const {getter, setter} = model;
-
-		const prevProps = (component.props && typeof component.props === 'object') ? component.props : {};
-		const props = {
-			...prevProps,
-			[getter.name]: getter.mapper ? getter.mapper(value) : _defaultMapper(value),
-			[setter.name]: (e) => setValue(setter.mapper ? setter.mapper(e) : _defaultMapper(e)),
-			...rest
-		};
-
-		return React.createElement(component.type || component.prototype, props, children);
-	};
-
-/**
  * Implementation lens connection over React.Component.
  */
 export class LensComponent extends React.Component {
+
 	constructor(props) {
 		super(props);
 
@@ -164,11 +152,11 @@ export class LensComponent extends React.Component {
 
 	componentDidMount() {
 		const {lens} = this.props;
-		lens.attach(this._lensCallback);
+		lens.subscribe(this._lensCallback);
 	}
 
 	componentWillUnmount() {
 		const {lens} = this.props;
-		lens.detach(this._lensCallback);
+		lens.unsubscribe(this._lensCallback);
 	}
 }
