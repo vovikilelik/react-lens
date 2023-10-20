@@ -136,8 +136,8 @@ const Component: React.FC = () => {
 ### Atoms
 `react-lens` does not use the global scope. This allows you to create as many small states as you want. We recommend using this approach. This will simplify the work with data and improve the performance of the application.
 ```ts
-export const options = createState({ theme: 'white' });
-export const auth = createState({ username: 'Tom' });
+export const options = createStore({ theme: 'white' });
+export const auth = createStore({ username: 'Tom' });
 ...
 ```
 
