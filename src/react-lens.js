@@ -53,6 +53,14 @@ const _createMatches = (triggersOrDirectives) =>
 		})
 		.filter(t => t);
 
+const _match = (matches, ...args) => {
+	for (let i = 0; i < matches.length; i++) {
+		const result = matches[i](...args);
+		if (result !== undefined)
+			return result;
+	}
+}
+
 /**
  * Like useState(), plus adding listener for render triggering.
  */
@@ -67,7 +75,7 @@ export const useLens = (lens, trigger = 'object', ...triggers) => {
 		const matches = _createMatches([trigger, ...triggers]);
 
 		return (...args) => {
-			if (matches.some(m => m(...args))) {
+			if (_match(matches, ...args)) {
 				setValue(lens.get());
 				return;
 			}
@@ -115,7 +123,7 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 		const matches = _createMatches([trigger, ...triggers]);
 
 		return (...args) => {
-			if (matches.some(m => m(...args))) {
+			if (_match(matches, ...args)) {
 				debounce.run(() => setValue(lens.get()), read);
 				return;
 			}
