@@ -22,7 +22,7 @@ declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet,
 
 declare interface ModelVector<A, B = A> {
     name: string;
-    mapper: (value: A) => B
+    mapper: (value: A) => B;
 }
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
