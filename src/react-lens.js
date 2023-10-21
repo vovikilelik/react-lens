@@ -69,20 +69,18 @@ export const useLens = (lens, trigger = 'object', ...triggers) => {
 	
 	useEffect(() => {
 		setValue(lens.get());
-	}, [lens]);
-	
-	const attach = useMemo(() => {
+
 		const matches = _createMatches([trigger, ...triggers]);
 
-		return (...args) => {
+		const callback = (...args) => {
 			if (_match(matches, ...args)) {
 				setValue(lens.get());
 				return;
 			}
 		};
-	}, [lens, trigger, ...triggers]);
 
-	useSubscribe(lens, attach);
+		return lens.subscribe(callback);
+	}, [lens, trigger, ...triggers]);
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
@@ -102,7 +100,7 @@ const getTimeoutSet = (timeout = 0) => {
 };
 
 export const useDebounce = (timeout) => {
-	return useMemo(() => new Debounce(timeout), []);
+	return useMemo(() => new Debounce(timeout), [timeout]);
 }
 
 /**
@@ -111,26 +109,29 @@ export const useDebounce = (timeout) => {
 export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...triggers) => {
 	const [value, setValue] = useState(lens.get());
 	
-	useEffect(() => {
-		setValue(lens.get());
-	}, [lens]);
-	
 	const debounce = useDebounce(timeout);
 
 	const { read, write } = getTimeoutSet(timeout);
-	
-	const attach = useMemo(() => {
+
+	useEffect(() => {
+		setValue(lens.get());
+
 		const matches = _createMatches([trigger, ...triggers]);
 
-		return (...args) => {
+		const callback = (...args) => {
 			if (_match(matches, ...args)) {
 				debounce.run(() => setValue(lens.get()), read);
 				return;
 			}
 		};
-	}, [lens, trigger, ...triggers]);
 
-	useSubscribe(lens, attach);
+		const unsubscriber = lens.subscribe(callback);
+
+		return () => {
+			unsubscriber();
+			debounce.cancel();
+		}
+	}, [lens, debounce, trigger, ...triggers]);
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
