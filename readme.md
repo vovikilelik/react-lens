@@ -311,3 +311,6 @@ export class Counter extends LensComponent {
 /* uses */
 <Counter lens={/* Your counter lens */} />
 ```
+
+---
+For more documentation see [Wiki](https://wiki.dev-store.xyz/react-lens/) documentation.
