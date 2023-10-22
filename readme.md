@@ -216,7 +216,7 @@ const Component: React.FC = () => {
 }
 ```
 
-It is worth noting that useLens() already uses Trigger.object by default. Don't forget to specify it if you need it.
+It is worth noting that `useLens()` already uses `Trigger.object` by default. Don't forget to specify it if you need it.
 
 ```ts
 const [value] = useLens(store, Triggers.object, evenTrigger);
@@ -228,11 +228,11 @@ Some system triggers have been replaced with their string counterparts: `object`
 const [value] = useLens(store, 'object', evenTrigger);
 ```
 
-The order of the tierggers matters. `react-lens` will stop processing all other triggers as soon as it encounters the first one, which returns `true` or `false`. If the trigger returns `false`, then `react-lens` considers that the component should not be updated and stops further processing. The `undefined` value will not update the component, but will transfer control to the next trigger.
+The order of the tierggers matters. `react-lens` will stop processing all other triggers as soon as it encounters the first one, which returns `true` or `false`. If the trigger returns a certain value, then `react-lens` will decide what to do. `true` - to react to changes, `false` - not to react. The `undefined` value will not update the component, but will transfer control to the next trigger.
 
 ```ts
-useLens(store, () => { /* triggered */ }, () => true, () => { /* not triggered */ });
-useLens(store, () => { /* triggered */ }, () => false, () => { /* not triggered */ });
+useLens(store, () => { /* called */ }, () => true, () => { /* not called */ });
+useLens(store, () => { /* called */ }, () => false, () => { /* not called */ });
 ```
 
 All system triggers will return `undefined` if they failed validation and pass control to the next trigger.
@@ -289,7 +289,7 @@ const Test: React.FC = () => {
   const testStore = createStore({ ... });
 
   return (
-    <AuthorizeContext.provider value={testStore}>
+    <AuthorizeContext.Provider value={testStore}>
       <Form />
     </AuthorizeContext.Provider>
   );
