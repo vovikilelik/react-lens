@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Context } from 'react';
 
 import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType } from "@vovikilelik/lens-js";
 
@@ -16,14 +16,15 @@ declare interface TimeoutSet {
 	write: number;
 }
 
-declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
+declare type DescriptorType<T> = [T, (value: T) => void];
 
-declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
-declare interface ModelVector<A, B = A> {
-    name: string;
-    mapper: (value: A) => B;
-}
+declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
+
+declare type LensContext<T> = Context<{ value: Lens<T> }>;
+declare function createLensContext<T>(value?: Lens<T>): LensContext<T>;
+declare function useLensContext<T>(context: LensContext<T>, defaultLens?: Lens<T>, ...triggers: Trigger<T>[]): DescriptorType<T>;
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
     protected onLensChanged(event: AttachEvent<L>, lens: Lens<L>): void;

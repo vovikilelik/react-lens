@@ -262,6 +262,40 @@ const Form: React.FC = () => {
 }
 ```
 
+### useLensContext()
+`useLensContext()` may be needed if you are developing hooks related to the external state, which should be integrated into the application in parallel with other models. This will help to better test the application on `react-lens`.
+
+```ts
+const AuthorizeContext = createLensContext();
+
+const authorizeStore = createStore({ ... });
+
+const useAuthorize = () => {
+  ...
+  return useLensContext(authorizeContext, authorizeStore);
+}
+
+const Form: React.FC = () => {
+  const [auth] = useAuthorize();
+  ...
+}
+
+const Prodaction: React.FC = () => {
+  ...
+  return <Form />;
+}
+
+const Test: React.FC = () => {
+  const testStore = createStore({ ... });
+
+  return (
+    <AuthorizeContext.provider value={testStore}>
+      <Form />
+    </AuthorizeContext.Provider>
+  );
+}
+```
+
 ## Creation statefull components
 You can create an own class component extending `LensComponent<L, P, S>`, like `React.Component<P, S>`, where `L` is type of `Lens` node.
 ```ts

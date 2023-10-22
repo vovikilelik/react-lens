@@ -141,6 +141,13 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 	return [value, setter];
 };
 
+export const createLensContext = value => createContext({ value });
+
+export const useLensContext = (context, defaultLens, trigger = 'object', ...triggers) => {
+	const current = useContext(context);
+	return useLens(current.value || defaultLens, trigger, ...triggers);
+};
+
 /**
  * Implementation lens connection over React.Component.
  */
