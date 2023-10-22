@@ -140,6 +140,11 @@ export const options = createStore({ theme: 'white' });
 export const auth = createStore({ username: 'Tom' });
 ...
 ```
+### Async operations
+All changes in `react-lens` are processed asynchronously. That means two things:
+
+1. Multiple changes are glued together in one cascade and do not lead to multiple updates.
+2. It is safe to work with the state from an asynchronous context. There is no need to use middleware for this.
 
 ## Catching changes
 
