@@ -273,7 +273,6 @@ const Form: React.FC = () => {
 
 ```ts
 const AuthorizeContext = createLensContext();
-
 const authorizeStore = createStore({ ... });
 
 const useAuthorize = () => {
@@ -286,11 +285,13 @@ const Form: React.FC = () => {
   ...
 }
 
-const Prodaction: React.FC = () => {
+/* On prod and dev */
+const Production: React.FC = () => {
   ...
   return <Form />;
 }
 
+/* Testing */
 const Test: React.FC = () => {
   const testStore = createStore({ ... });
 
