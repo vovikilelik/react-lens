@@ -254,6 +254,7 @@ Creating an input field for asynchronous search is simple!
 ```ts
 const DebounceInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
   const [value, setValue] = useLensDebounce(lens, 1000);
+  
   return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
@@ -261,7 +262,7 @@ const Form: React.FC = () => {
   const localStore = createStore('');
   
   const doResponse = useCallback(() => fetch(...));
-  useSubscribe(lensNode, doResponse);
+  useSubscribe(localStore, doResponse);
   
   return <DebounceInput lens={localStore} />
 }
