@@ -1,36 +1,30 @@
-import React from 'react';
+import React, { Context } from 'react';
 
-import { Lens, Callback, AttachEvent } from "@vovikilelik/lens-js";
+import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType } from "@vovikilelik/lens-js";
 
-declare function useAttach<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
+declare function useSubscribe<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 
-declare type MatchFunction<T> = (event: AttachEvent<T>, node: Lens<T>) => any;
-declare type MatchFunctionOrDirective<T> = MatchFunction<T> | Callback<T> | 'change' | 'strict' | 'before' | 'after';
+declare function useLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
+declare function useStaticLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
+declare function useDerivedLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
+
+declare function useDebounce(defaultTimeout?: number): DebounceType;
+
+declare type MatchFunctionOrDirective<T> = Trigger<T> | 'object' | 'strict' | 'path' | 'subtree' | 'all';
 declare interface TimeoutSet {
 	read: number;
 	write: number;
 }
 
-declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
+declare type DescriptorType<T> = [T, (value: T) => void];
 
-declare function useDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): [T, (value: T) => void];
+declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
-declare interface ModelVector<A, B = A> {
-    name: string;
-    mapper: (value: A) => B
-}
+declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
-declare interface Model<L, G, S> {
-    getter: ModelVector<L, G>, // value
-    setter: ModelVector<S, L>  // onChanged
-}
-
-declare function getHtmlLikeModel<T, G extends { target: { value: T } }>(): Model<T, T, G>
-
-declare function createLensComponent<L, P = {}>(
-    component: React.ReactElement<P>,
-    model: Model<L, any, any>
-): React.FC<P & { lens: Lens<L> }>
+declare type LensContext<T> = Context<{ value: Lens<T> }>;
+declare function createLensContext<T>(value?: Lens<T>): LensContext<T>;
+declare function useLensContext<T>(context: LensContext<T>, defaultLens?: Lens<T>, ...triggers: Trigger<T>[]): DescriptorType<T>;
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
     protected onLensChanged(event: AttachEvent<L>, lens: Lens<L>): void;

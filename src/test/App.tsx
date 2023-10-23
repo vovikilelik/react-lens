@@ -1,21 +1,18 @@
 import React, { Component, useRef } from "react";
 
-import { Lens } from "@vovikilelik/lens-js";
-
-import { useLens, useDebounce, createLensComponent, getHtmlLikeModel } from "../react-lens";
+import { useLens, useLensDebounce } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
+import { Lens } from '@vovikilelik/lens-js';
 
-function Throttling(defaultTimeout) {
-    let sync = 0;
-    this.run = (func, timeout = defaultTimeout) => {
-        const stamp = ++sync;
-        setTimeout(() => {
-            (sync === stamp) && func();
-        }, timeout);
-    };
+import { LocalDerivedStore, LocalStore } from './modules';
+
+const LensInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
+	const [value, setValue] = useLens(lens);
+
+	return (
+		<input value={value} onChange={e => setValue(e.target.value)} />
+	);
 }
-
-const LensInput = createLensComponent<string>(<input />, getHtmlLikeModel());
 
 interface State {
     name: string;
@@ -32,10 +29,10 @@ const lens = new Lens<State>(
   }
 );
 
-lens.go('name').attach(e => console.log(JSON.stringify(lens.get())));
+lens.go('name').subscribe(e => console.log(JSON.stringify(lens.get())));
 
 const DebounceInput: React.FC<{lens: Lens<string>}> = ({ lens }) => {
-    const [value, setValue] = useDebounce(lens, 1000);
+    const [value, setValue] = useLensDebounce(lens, 1000);
     return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
@@ -58,57 +55,59 @@ const Flow: React.FC<any> = ({ lens, func, title }) => {
 
 class App extends Component {
     render() {
-        const name = lens.go('name');
-		const path = lens.go('multi').go('path');
-		const node = lens.go('multi').go('path').go('strict');
-		const tree = lens.go('multi').go('path').go('tree').go('value');
+      const name = lens.go('name');
+			const path = lens.go('multi').go('path');
+			const node = lens.go('multi').go('path').go('strict');
+			const tree = lens.go('multi').go('path').go('tree').go('value');
 
-        return (
-            <div>
-				<div>
-					<h1>Set</h1>
-					<ClassComponent lens={lens.go('counter')} />
-					<ClassComponent lens={lens.go('counter')} />
-				</div>
-				<div>
-					<h1>Debounce</h1>
-					<LensInput 
-					   lens={name}
-					/>
-					<LensInput 
-					   lens={name}
-					/>
-					<DebounceInput 
-					   lens={name}
-					/>
-				</div>
-				<div>
-					<h1>Multi attach</h1>
-					<button onClick={() => path.set({ strict: Math.random() + '', tree: { value: Math.random() + '' } })}>Path</button>
-					<button onClick={() => node.set(Math.random() + '')}>Strict</button>
-					<button onClick={() => tree.set(Math.random() + '')}>Tree</button>
-					<div>===path===</div>
-					<Flow lens={path} title='after' />
-					<Flow lens={node} title='after' />
-					<Flow lens={tree} title='after' />
-					<div>===strict===</div>
-					<Flow lens={path} title='strict' />
-					<Flow lens={node} title='strict' />
-					<Flow lens={tree} title='strict' />
-					<div>===tree===</div>
-					<Flow lens={path} title='before' />
-					<Flow lens={node} title='before' />
-					<Flow lens={tree} title='before' />
-				</div>
-				<div>
-					<h1>Callbacks</h1>
-					<button onClick={() => name.set(Math.floor(Math.random() * 5) + '')}>Random</button>
-					<Flow lens={name} func={() => false} title='false' />
-					<Flow lens={name} func={() => true} title='true' />
-					<Flow lens={name} func={() => name.get() === '2'} title='===2' />
-				</div>
-            </div>
-        );
+      return (
+        <div>
+					<div>
+						<h1>Set</h1>
+						<ClassComponent lens={lens.go('counter')} />
+						<ClassComponent lens={lens.go('counter')} />
+					</div>
+					<div>
+						<h1>Debounce</h1>
+						<LensInput 
+							lens={name}
+						/>
+						<LensInput 
+							lens={name}
+						/>
+						<DebounceInput 
+							lens={name}
+						/>
+					</div>
+					<div>
+						<h1>Multi attach</h1>
+						<button onClick={() => path.set({ strict: Math.random() + '', tree: { value: Math.random() + '' } })}>Path</button>
+						<button onClick={() => node.set(Math.random() + '')}>Strict</button>
+						<button onClick={() => tree.set(Math.random() + '')}>Tree</button>
+						<div>===path===</div>
+						<Flow lens={path} title='after' />
+						<Flow lens={node} title='after' />
+						<Flow lens={tree} title='after' />
+						<div>===strict===</div>
+						<Flow lens={path} title='strict' />
+						<Flow lens={node} title='strict' />
+						<Flow lens={tree} title='strict' />
+						<div>===tree===</div>
+						<Flow lens={path} title='before' />
+						<Flow lens={node} title='before' />
+						<Flow lens={tree} title='before' />
+					</div>
+					<div>
+						<h1>Callbacks</h1>
+						<button onClick={() => name.set(Math.floor(Math.random() * 5) + '')}>Random</button>
+						<Flow lens={name} func={() => false} title='false' />
+						<Flow lens={name} func={() => true} title='true' />
+						<Flow lens={name} func={() => name.get() === '2'} title='===2' />
+					</div>
+					<LocalStore />
+					<LocalDerivedStore />
+        </div>
+      );
     }
 }
 
