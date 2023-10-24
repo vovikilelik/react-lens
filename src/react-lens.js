@@ -14,12 +14,12 @@ export const useSubscribe = (lens, ...callbacks) => {
 
 export const useLocalStore = (initData, instance = Store) => {
 	return useMemo(() => createStore(initData, instance), [initData, instance]);
-}
+};
 
 export const useStaticLocalStore = (initData, instance) => {
 	const localData = useMemo(() => initData, []);
 	return useLocalStore(localData, instance);
-}
+};
 
 export const useDerivedLocalStore = (initData, instance) => {
 	const store = useStaticLocalStore(initData, instance);
@@ -28,8 +28,8 @@ export const useDerivedLocalStore = (initData, instance) => {
 		store.set(initData);
 	}, [store, initData]);
 
-	return store
-}
+	return store;
+};
 
 const _createMatches = (triggersOrDirectives) =>
 	triggersOrDirectives
@@ -59,7 +59,7 @@ const _match = (matches, ...args) => {
 		if (result !== undefined)
 			return result;
 	}
-}
+};
 
 /**
  * Like useState(), plus adding listener for render triggering.
@@ -101,7 +101,7 @@ const getTimeoutSet = (timeout = 0) => {
 
 export const useDebounce = (timeout) => {
 	return useMemo(() => new Debounce(timeout), [timeout]);
-}
+};
 
 /**
  * Like useLens(), plus adding throttling.
@@ -130,7 +130,7 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 		return () => {
 			unsubscriber();
 			debounce.cancel();
-		}
+		};
 	}, [lens, debounce, trigger, ...triggers]);
 	
 	const setter = useCallback(value => {
