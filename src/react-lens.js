@@ -36,16 +36,10 @@ const _createMatches = (triggersOrDirectives) =>
 		.map(t => {
 			switch (typeof t) {
 				case 'string':
-					if (!Triggers[t])
+					if (t === 'all') {
 						return (() => true);
-
-					return (...args) => {
-						const result = Triggers[t](...args);
-
-						if (!result)
-							return undefined;
-
-						return result;
+					} else {
+						return Triggers[t] || (() => undefined);
 					}
 				case 'function':
 					return t;
