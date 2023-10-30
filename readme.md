@@ -8,6 +8,8 @@ At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
 ## Links
 * [Wiki](https://wiki.dev-store.xyz/react-lens/) for more information
 * [GIT Repository](https://git.dev-store.xyz/Clu/react-lens/) for latest version
+* [GIT Mirror (Github)](https://github.com/vovikilelik/react-lens)
+* [Examples repository](https://github.com/vovikilelik/react-lens-examples) for fun!
 
 ## Instalation
 ```
@@ -74,10 +76,10 @@ const Component: React.FC = () => {
   ...
 }
 ```
-Hook `useDerivedLocalStore` will monitor the change in the state of the parent component.
+Hook `useDerivedStore` will monitor the change in the state of the parent component.
 ```ts
 const Component: React.FC<{ parentValue: any }> = ({ parentValue }) => {
-  const localStore = useDerivedLocalStore(parentValue);
+  const localStore = useDerivedStore(parentValue);
   ...
 }
 ```

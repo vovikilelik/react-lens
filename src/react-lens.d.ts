@@ -1,12 +1,14 @@
 import React, { Context } from 'react';
 
-import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType } from "@vovikilelik/lens-js";
+import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType, ChainFactory } from "@vovikilelik/lens-js";
 
 declare function useSubscribe<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 
 declare function useLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
 declare function useStaticLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
-declare function useDerivedLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
+declare function useDerivedStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
+
+declare function useChain<A extends Lens<T>, B extends Lens<any>, T>(lens: Lens<T>, factory: ChainFactory<A, B> | Instance<B, T>): B;
 
 declare function useDebounce(defaultTimeout?: number): DebounceType;
 

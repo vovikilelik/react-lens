@@ -21,7 +21,7 @@ export const useStaticLocalStore = (initData, instance) => {
 	return useLocalStore(localData, instance);
 };
 
-export const useDerivedLocalStore = (initData, instance) => {
+export const useDerivedStore = (initData, instance) => {
 	const store = useStaticLocalStore(initData, instance);
 
 	useEffect(() => {
@@ -29,6 +29,10 @@ export const useDerivedLocalStore = (initData, instance) => {
 	}, [store, initData]);
 
 	return store;
+};
+
+export const useChain = (lens, instance) => {
+	return useMemo(() => lens.chain(instance), [lens]);
 };
 
 const _createMatches = (triggersOrDirectives) =>
