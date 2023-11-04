@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDerivedLocalStore, useLens, useLocalStore, useStaticLocalStore, useSubscribe } from '../../react-lens';
+import { useDerivedStore, useLens, useLocalStore, useStaticLocalStore, useSubscribe } from '../../react-lens';
 
 export const LocalStore: React.FC = () => {
 	const store = useLocalStore('text');
@@ -13,7 +13,7 @@ export const LocalStore: React.FC = () => {
 }
 
 export const LocalDerivedStorePeer: React.FC<{ value: any }> = ({ value }) => {
-	const store = useDerivedLocalStore(value);
+	const store = useDerivedStore(value);
 	useLens(store);
 
 	return <button onClick={() => store.set(Math.random() + '')}>{'owned store ' + store.get()}</button>;
