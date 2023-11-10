@@ -1,3 +1,7 @@
+/**
+ * LGPL-2.1-or-later 
+ */
+
 import { Debounce, Store, Triggers, createStore } from '@vovikilelik/lens-js';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 

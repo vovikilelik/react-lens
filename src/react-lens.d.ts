@@ -1,3 +1,7 @@
+/**
+ * LGPL-2.1-or-later 
+ */
+
 import React, { Context } from 'react';
 
 import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType, ChainFactory } from "@vovikilelik/lens-js";
