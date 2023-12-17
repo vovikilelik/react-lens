@@ -3,7 +3,7 @@
  */
 
 import { Debounce, Store, Triggers, createStore } from '@vovikilelik/lens-js';
-import React, { useState, useEffect, useMemo, useCallback, createContext } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 
 
 /**
@@ -149,10 +149,6 @@ export const useLensContext = (context, defaultLens, trigger = 'object', ...trig
 	const current = useContext(context);
 	return useLens(current.value || defaultLens, trigger, ...triggers);
 };
-
-export const useSelector = (selector, ...triggers) => {
-
-} 
 
 /**
  * Implementation lens connection over React.Component.

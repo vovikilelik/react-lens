@@ -1,5 +1,5 @@
 import React from 'react';
-import { useChain, useDebounce, useLocalStore, useSubscribe } from '../react-lens';
+import { useChain, useDebounce, useLens, useLocalStore, useSubscribe } from '../react-lens';
 import { Lens, createStore, transform } from '@vovikilelik/lens-js';
 
 const Component: React.FC = () => {
@@ -33,6 +33,10 @@ const Component2: React.FC = () => {
 	useSubscribe(store, (e, node) => {});
 
 	const debounce = useDebounce(1223);
+
+	const [x, setX] = useLens(xstore);
+
+	setX(v => v + 1);
 
 	return <></>;
 }

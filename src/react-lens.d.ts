@@ -1,5 +1,5 @@
 /**
- * LGPL-2.1-or-later 
+ * LGPL-2.1-or-later
  */
 
 import React, { Context } from 'react';
@@ -22,7 +22,7 @@ declare interface TimeoutSet {
 	write: number;
 }
 
-declare type DescriptorType<T> = [T, (value: T) => void];
+declare type DescriptorType<T> = [T, (value: T | ((prev: T) => T)) => void];
 
 declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
@@ -30,7 +30,7 @@ declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet,
 
 declare type LensContext<T> = Context<{ value: Lens<T> }>;
 declare function createLensContext<T>(value?: Lens<T>): LensContext<T>;
-declare function useLensContext<T>(context: LensContext<T>, defaultLens?: Lens<T>, ...triggers: Trigger<T>[]): DescriptorType<T>;
+declare function useLensContext<T>(context: LensContext<T>, defaultLens?: Lens<T> | null, ...triggers: Trigger<T>[]): DescriptorType<T>;
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
     protected onLensChanged(event: AttachEvent<L>, lens: Lens<L>): void;
