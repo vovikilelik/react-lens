@@ -6,8 +6,9 @@ It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/packa
 At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
 
 ## Links
+* [Homepage](https://react-lens.dev-store.xyz/) for more information
 * [Wiki](https://wiki.dev-store.xyz/react-lens/) for more information
-* [GIT Repository](https://git.dev-store.xyz/Clu/react-lens/) for latest version
+* [GIT Repository (Oficial)](https://git.dev-store.xyz/Clu/react-lens/) for latest version
 * [GIT Mirror (Github)](https://github.com/vovikilelik/react-lens)
 * [Examples repository](https://github.com/vovikilelik/react-lens-examples) for fun!
 
@@ -23,7 +24,7 @@ const store = createStore(0);
 
 const Counter: React.FC = () => {
   const [count, setCount] = useLens(store);
-  
+
   return (
     <button onClick={() => setCount(count + 1)}>
       { count }
@@ -32,7 +33,7 @@ const Counter: React.FC = () => {
 }
 ```
 
-# Owerview
+# Overview
 `react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js). See it for more functionality.
 
 ## Main Futures
@@ -57,6 +58,7 @@ To create a global state, the `createStore()` method is used.
 export const store = createStore({ /* Initial data */ });
 ```
 >  This method has more functionality, see [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js)
+
 #### Local State Definition
 A local state can be created using the same method - `createStore()`. However, there is an easier way using hook `useLocalStore()`. It has the same functionality as the `createStore()` method.
 ```ts
@@ -104,13 +106,13 @@ store.sayHello('Martin');  // Hello Martin!
 The functional method makes it easy to embed child models. However, this is only a convenient conversion. Any nested models can still be accessed using the `go()` method.
 
 ```ts
-const message = createStore('Hello!');
+const nested = createStore('Hello!');
 
 const store = createStore({})
-  .extends({ message });
+  .extends({ nested });
 
-store.message.get();  // Hello!
-store.go('message').get();  // Hello!
+store.nested.get();  // Hello!
+store.go('nested').get();  // Hello!
 ```
 
 ### Object-oriented Way
@@ -135,6 +137,7 @@ const Component: React.FC = () => {
   ...
 }
 ```
+
 ### Atoms
 `react-lens` does not use the global scope. This allows you to create as many small states as you want. We recommend using this approach. This will simplify the work with data and improve the performance of the application.
 ```ts
@@ -142,6 +145,7 @@ export const options = createStore({ theme: 'white' });
 export const auth = createStore({ username: 'Tom' });
 ...
 ```
+
 ### Async operations
 All changes in `react-lens` are processed asynchronously. That means two things:
 
@@ -164,7 +168,7 @@ It is worth noting that the hooks for creating a local state, like `useLocalStor
 ```ts
 const Component: React.FC = () => {
   const localStore = useLocalStore(initData);
-  
+
   /* Needs for updating component when localStore changed */
   const [value, setValue] = useLens(localStore);
   ...
@@ -176,7 +180,7 @@ However, you can manage subscriptions manually using the built-in functions in t
 ```ts
 const Component: React.FC = () => {
   const localStore = useLocalStore(initData);
-  
+
   const callback = useCallback(() => { /* You reaction on changes */ })
   useSubscribe(localStore, callback);
   ...
@@ -194,7 +198,7 @@ const Text: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
 
 const Random: React.FC = () => {
   const localStore = useLocalStore(0);  // Store don`t triggering update
-  
+
   return (
     <button onClick={() => localStore.set(Math.random())}>
       <Text lens={localStore} />
@@ -256,16 +260,16 @@ Creating an input field for asynchronous search is simple!
 ```ts
 const DebounceInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
   const [value, setValue] = useLensDebounce(lens, 1000);
-  
+
   return <input value={value} onChange={e => setValue(e.target.value)} />
 }
 
 const Form: React.FC = () => {
   const localStore = createStore('');
-  
+
   const doResponse = useCallback(() => fetch(...));
   useSubscribe(localStore, doResponse);
-  
+
   return <DebounceInput lens={localStore} />
 }
 ```

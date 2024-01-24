@@ -1,6 +1,6 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "license": "LGPL-2.1-or-later",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
@@ -44,7 +44,7 @@
         "start": "live-server",
         "build": "webpack --mode development"
     },
-    "homepage": "https://wiki.dev-store.xyz/react-lens/",
+    "homepage": "https://react-lens.dev-store.xyz/",
     "repository": {
         "type": "git",
         "url": "https://github.com/vovikilelik/react-lens"
