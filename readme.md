@@ -111,8 +111,20 @@ const nested = createStore('Hello!');
 const store = createStore({})
   .extends({ nested });
 
-store.nested.get();  // Hello!
-store.go('nested').get();  // Hello!
+const value1 = store.nested.get();  // Hello!
+const value2 = store.go('nested').get();  // Hello!
+```
+
+There is a simplified way to access the data associated with the model. Use `view` instead of `extends`.
+
+```ts
+const store = createStore({})
+  .view({ nested: 'Hello!' });
+
+console.log(store.nested);  // Hello!
+
+store.nested = 'Hey!';
+console.log(store.nested);  // Hey!
 ```
 
 ### Object-oriented Way
