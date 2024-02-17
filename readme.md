@@ -193,7 +193,7 @@ However, you can manage subscriptions manually using the built-in functions in t
 const Component: React.FC = () => {
   const localStore = useLocalStore(initData);
 
-  const callback = useCallback(() => { /* You reaction on changes */ })
+  const callback = useCallback(() => { /* You reaction on changes */ }, []);
   useSubscribe(localStore, callback);
   ...
 }
@@ -203,22 +203,20 @@ const Component: React.FC = () => {
 
 It doesn't really matter how many child models you use. There is one rule - use `useLens()` where you need to update the component.
 ```ts
-const Text: React.FC<{ lens: Lens<number> }> = ({ lens }) => {
-  const [value] = useLens(lens);  // Child will be updated if store changed
+const globalStore = createStore({}).view({ nested: 0 });
+
+const Nested: React.FC<{ store: Store<number> }> = ({ store }) => {
+  const [value] = useLens(store);  // Use useLens() on any store for catching changes and rerendering
   return <>{value}</>
 }
 
-const Random: React.FC = () => {
-  const localStore = useLocalStore(0);  // Store don`t triggering update
-
-  return (
-    <button onClick={() => localStore.set(Math.random())}>
-      <Text lens={localStore} />
-    </button>
-  );
-}
+const Global: React.FC = () => (
+  <button onClick={() => globalStore.nested = Math.random()}>
+    <Text lens={globalStore.nested} />
+  </button>
+);
 ```
-> Note that it makes no sense for us to update the `Random` component.
+> Note that it makes no sense for us to update the `Global` component.
 
 ### Custom Triggers
 
@@ -234,7 +232,7 @@ const store = createStore(0);
 const evenTrigger: Trigger<number> = (event, node) => node.get() % 2 === 0;
 
 const Component: React.FC = () => {
-  const [value] = useLens(store, evenTrigger);
+  const [value] = useLens(store, evenTrigger);  // Will render if store will be even
   return <>{value}</>
 }
 ```
@@ -279,7 +277,7 @@ const DebounceInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
 const Form: React.FC = () => {
   const localStore = createStore('');
 
-  const doResponse = useCallback(() => fetch(...));
+  const doResponse = useCallback(() => fetch(...), []);
   useSubscribe(localStore, doResponse);
 
   return <DebounceInput lens={localStore} />
