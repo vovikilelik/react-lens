@@ -115,7 +115,7 @@ const value1 = store.nested.get();  // Hello!
 const value2 = store.go('nested').get();  // Hello!
 ```
 
-There is a simplified way to access the data associated with the model. Use `view` instead of `extends`.
+There is a simplified way to access the data associated with the model. Use `view()` instead of `extends()`.
 
 ```ts
 const store = createStore({})
