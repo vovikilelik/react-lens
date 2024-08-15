@@ -25,6 +25,11 @@ export const useStaticLocalStore = (initData, instance) => {
 	return useLocalStore(localData, instance);
 };
 
+export const useLensStore = (initData, instanceOrDeps = Store, deps) => {
+	const currentDeps = deps ? [...deps, instanceOrDeps] : instanceOrDeps;
+	return useMemo(() => createStore(initData, instance), currentDeps);
+};
+
 export const useDerivedStore = (initData, instance) => {
 	const store = useStaticLocalStore(initData, instance);
 
@@ -44,7 +49,7 @@ const _createMatches = (triggersOrDirectives) =>
 		.map(t => {
 			switch (typeof t) {
 				case 'string':
-					if (t === 'all') {
+					if (t === 'deep') {
 						return (() => true);
 					} else {
 						return Triggers[t] || (() => undefined);

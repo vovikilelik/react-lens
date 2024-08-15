@@ -1,5 +1,5 @@
 import React from 'react';
-import { useChain, useDebounce, useLens, useLocalStore, useSubscribe } from '../react-lens';
+import { useChain, useDebounce, useLens, useLensStore, useLocalStore, useSubscribe } from '../react-lens';
 import { Lens, createStore, transform } from '@vovikilelik/lens-js';
 
 const Component: React.FC = () => {
@@ -37,6 +37,18 @@ const Component2: React.FC = () => {
 	const [x, setX] = useLens(xstore);
 
 	setX(v => v + 1);
+
+	return <></>;
+}
+
+interface Foo {
+	foo: string;
+}
+
+const Component3: React.FC = () => {
+	const store = useLensStore<Foo>({ foo: '' }, [true]);
+
+	store.get().foo
 
 	return <></>;
 }
