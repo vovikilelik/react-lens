@@ -4,7 +4,7 @@ import { useLens, useLensDebounce } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 import { Lens } from '@vovikilelik/lens-js';
 
-import { LocalDerivedStore, LocalStore } from './modules';
+import { LensStore, LocalDerivedStore, LocalStore } from './modules';
 
 const LensInput: React.FC<{ lens: Lens<string> }> = ({ lens }) => {
 	const [value, setValue] = useLens(lens);
@@ -106,6 +106,7 @@ class App extends Component {
 					</div>
 					<LocalStore />
 					<LocalDerivedStore />
+					<LensStore />
         </div>
       );
     }

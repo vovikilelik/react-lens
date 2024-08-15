@@ -26,8 +26,17 @@ export const useStaticLocalStore = (initData, instance) => {
 };
 
 export const useLensStore = (initData, instanceOrDeps = Store, deps) => {
-	const currentDeps = deps ? [...deps, instanceOrDeps] : instanceOrDeps;
-	return useMemo(() => createStore(initData, instance), currentDeps);
+	const instanceIsDeps = Array.isArray(instanceOrDeps);
+
+	const currentInstance = instanceIsDeps
+		? Store
+		: instanceOrDeps;
+
+	const currentDeps = instanceIsDeps
+		? instanceOrDeps
+		: (deps ? [...deps, currentInstance] : [currentInstance])
+
+	return useMemo(() => createStore(initData, currentInstance), currentDeps);
 };
 
 export const useDerivedStore = (initData, instance) => {

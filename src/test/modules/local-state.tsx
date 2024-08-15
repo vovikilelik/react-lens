@@ -1,5 +1,6 @@
 import React from 'react';
-import { useDerivedStore, useLens, useLocalStore, useStaticLocalStore, useSubscribe } from '../../react-lens';
+import { useDerivedStore, useLens, useLensStore, useLocalStore, useStaticLocalStore, useSubscribe } from '../../react-lens';
+import { Store } from '@vovikilelik/lens-js';
 
 export const LocalStore: React.FC = () => {
 	const store = useLocalStore('text');
@@ -29,4 +30,19 @@ export const LocalDerivedStore: React.FC = () => {
 			<LocalDerivedStorePeer value={store.get()} />
 		</div>
 	)
+}
+
+export const LensStore: React.FC = () => {
+	const store = useLensStore({ foo: '' });
+	useLens(store);
+
+	const store1 = useLensStore({ foo: '' }, ['qwe']);
+	const store2 = useLensStore({ foo: '' }, Store, ['qwe']);
+	const store3 = useLensStore({ foo: '' }, Store);
+
+	useSubscribe(store, (e, node) => {
+		console.log(node.get());
+	});
+
+	return <button onClick={() => store.go('foo').set(Math.random() + '')}>{'LensStore ' + store.get()}</button>;
 }
