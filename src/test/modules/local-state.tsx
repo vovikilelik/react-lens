@@ -34,7 +34,7 @@ export const LocalDerivedStore: React.FC = () => {
 
 export const LensStore: React.FC = () => {
 	const store = useLensStore({ foo: '' });
-	useLens(store);
+	useLens(store, 'deep');
 
 	const store1 = useLensStore({ foo: '' }, ['qwe']);
 	const store2 = useLensStore({ foo: '' }, Store, ['qwe']);
