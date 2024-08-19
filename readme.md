@@ -179,7 +179,7 @@ It is worth noting that the hooks for creating a local state, like `useLocalStor
 
 ```ts
 const Component: React.FC = () => {
-  const localStore = useLocalStore(initData);
+  const localStore = useLensStore(initData);
 
   /* Needs for updating component when localStore changed */
   const [value, setValue] = useLens(localStore);
@@ -191,7 +191,7 @@ However, you can manage subscriptions manually using the built-in functions in t
 
 ```ts
 const Component: React.FC = () => {
-  const localStore = useLocalStore(initData);
+  const localStore = useLensStore(initData);
 
   const callback = useCallback(() => { /* You reaction on changes */ }, []);
   useSubscribe(localStore, callback);
@@ -243,7 +243,7 @@ It is worth noting that `useLens()` already uses `Trigger.object` by default. Do
 const [value] = useLens(store, Triggers.object, evenTrigger);
 ```
 
-Some system triggers have been replaced with their string counterparts: `object`, `path`, `subtree`, `strict` and `all`.
+Some system triggers have been replaced with their string counterparts: `object`, `path`, `subtree`, `strict` and `deep`.
 
 ```ts
 const [value] = useLens(store, 'object', evenTrigger);
