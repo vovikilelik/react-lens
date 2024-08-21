@@ -60,29 +60,31 @@ export const store = createStore({ /* Initial data */ });
 >  This method has more functionality, see [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js)
 
 #### Local State Definition
-A local state can be created using the same method - `createStore()`. However, there is an easier way using hook `useLocalStore()`. It has the same functionality as the `createStore()` method.
+A local state can be created using the same method - `createStore()`. However, there is an easier way using hook `useLensStore()`. It has the same functionality as the `createStore()` + `useMemo()` method.
 ```ts
 cont initData = { message: 'Hello!' };
 
 const Component: React.FC = () => {
-  const localStore = useLocalStore(initData);
+  const localStore = useLensStore(initData);
   ...
 }
 ```
-There are other hooks to simplify the development of components.
-The `useStaticLocalStore()` hook will not be updated when the data used during creation changes.
+The `useLensStore()` hook will not be updated when the data used during creation changes. If you need recreate store, use `deps` array.
 
 ```ts
-const Component: React.FC = () => {
-  const localStore = useStaticLocalStore({ message: 'No updating' });
+const Component: React.FC<{ foo: any }> = ({ foo }) => {
+  const localStore = useLensStore({ message: foo }, [foo]);
   ...
 }
 ```
 Hook `useDerivedStore` will monitor the change in the state of the parent component.
 ```ts
 const Component: React.FC<{ parentValue: any }> = ({ parentValue }) => {
+  // localStore will update
   const localStore = useDerivedStore(parentValue);
   ...
+  // For example:
+  useEffect(() => { /* will no trigger */ }, [localStore])
 }
 ```
 
@@ -144,7 +146,7 @@ The same can be done when declaring a local state.
 class MyCar extends Store { ... }
 
 const Component: React.FC = () => {
-  const localStore = useLocalStore(initData, MyCar);
+  const localStore = useLensStore(initData, MyCar);
   localStore.move();
   ...
 }
@@ -337,3 +339,4 @@ export class Counter extends LensComponent {
 
 ---
 For more documentation see [Wiki](https://wiki.dev-store.xyz/react-lens/) documentation.
+
