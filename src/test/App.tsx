@@ -1,6 +1,6 @@
-import React, { Component, useRef } from "react";
+import React, { Component, useRef, useState } from "react";
 
-import { useLens, useLensDebounce } from "../react-lens";
+import { useLens, useLensDebounce, useLensStore, useSubscribe } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 import { Lens } from '@vovikilelik/lens-js';
 
@@ -51,6 +51,27 @@ const Flow: React.FC<any> = ({ lens, func, title }) => {
 	const [path] = useLens(lens, func || title);
 	
 	return <C title={title} />;
+}
+
+const SubscribeTest: React.FC = () => {
+	const store = useLensStore(-1);
+	useLens(store);
+
+	const [trigger, setTrigger] = useState(0);
+	const [count, setCount] = useState(0);
+	const [text, setText] = useState(0);
+
+	useSubscribe(store, () => setText(prev => prev + count), [trigger]);
+
+	return (
+		<div>
+			<div>Subscribe test</div>
+			<button onClick={() => setTrigger(trigger + 1)}>trigger: {trigger}</button>
+			<button onClick={() => setCount(count + 1)}>const: {count}</button>
+			<button onClick={() => store.set(prev => prev + 1)}>Check: [{store.get()}] Count is {text}</button>
+
+		</div>
+	);
 }
 
 class App extends Component {
@@ -107,6 +128,7 @@ class App extends Component {
 					<LocalStore />
 					<LocalDerivedStore />
 					<LensStore />
+					<SubscribeTest />
         </div>
       );
     }

@@ -10,10 +10,13 @@ import React, { useState, useEffect, useMemo, useCallback, createContext, useCon
  * Add listener to current lens.
  */
 export const useSubscribe = (lens, ...callbacks) => {
+	const last = callbacks[callbacks.length - 1];
+	const deps = Array.isArray(last) ? last : undefined;
+	
 	useEffect(() => {
 		const unsubscribers = callbacks.map(callback => lens.subscribe(callback));
-		return  () => unsubscribers.forEach(unsubscriber => unsubscriber());
-	}, [lens, ...callbacks]);
+		return () => unsubscribers.forEach(unsubscriber => unsubscriber && unsubscriber());
+	}, [lens, ...(deps || callbacks)]);
 };
 
 export const useLocalStore = (initData, instance = Store) => {
@@ -34,7 +37,7 @@ export const useLensStore = (initData, instanceOrDeps = Store, deps) => {
 
 	const currentDeps = instanceIsDeps
 		? instanceOrDeps
-		: (deps ? [...deps, currentInstance] : [currentInstance])
+		: (deps ? [...deps, currentInstance] : [currentInstance]);
 
 	return useMemo(() => createStore(initData, currentInstance), currentDeps);
 };

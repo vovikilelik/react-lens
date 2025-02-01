@@ -1,6 +1,6 @@
 {
     "name": "@vovikilelik/react-lens",
-    "version": "3.2.4",
+    "version": "3.2.5",
     "license": "LGPL-2.1-or-later",
     "description": "Utils for lens implementations in react apps",
     "keywords": [

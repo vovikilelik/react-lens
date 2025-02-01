@@ -7,6 +7,10 @@ import React, { Context } from 'react';
 import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType, ChainFactory } from "@vovikilelik/lens-js";
 
 declare function useSubscribe<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
+declare function useSubscribe<T>(lens: Lens<T>, c1: Callback<T>, deps: any[]): void;
+declare function useSubscribe<T>(lens: Lens<T>, c1: Callback<T>, c2: Callback<T>, deps: any[]): void;
+declare function useSubscribe<T>(lens: Lens<T>, c1: Callback<T>, c2: Callback<T>, c3: Callback<T>, deps: any[]): void;
+declare function useSubscribe<T>(lens: Lens<T>, c1: Callback<T>, c2: Callback<T>, c3: Callback<T>, c4: Callback<T>, deps: any[]): void;
 
 /** @deprecated use useLensStore instead */
 declare function useLocalStore<T = unknown, X extends Lens<T> = Store<T>, R = X>(key: T, instance?: Instance<R, T>): R;
