@@ -24,7 +24,7 @@
     "author": "octopus",
     "contributors": [],
     "dependencies": {
-        "@vovikilelik/lens-js": "^4.0.0"
+        "@vovikilelik/lens-js": "^4.0.1"
     },
     "peerDependencies": {
         "react": ">=17.0.0",
