@@ -2,7 +2,7 @@ import React, { Component, useRef, useState } from "react";
 
 import { useLens, useLensDebounce, useLensStore, useSubscribe } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
-import { Lens } from '@vovikilelik/lens-js';
+import { Lens } from '@devstore/lens-js';
 
 import { LensStore, LocalDerivedStore, LocalStore } from './modules';
 

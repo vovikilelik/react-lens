@@ -1,2 +1,2 @@
-export * from '@vovikilelik/lens-js';
+export * from '@devstore/lens-js';
 export * from './src/react-lens';

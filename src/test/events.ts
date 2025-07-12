@@ -1,4 +1,4 @@
-import { Callbacks, Lens, transform } from '@vovikilelik/lens-js';
+import { Callbacks, Lens, transform } from '@devstore/lens-js';
 
 interface Props {
     world: string;

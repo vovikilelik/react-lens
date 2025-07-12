@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDerivedStore, useLens, useLensStore, useLocalStore, useStaticLocalStore, useSubscribe } from '../../react-lens';
-import { Store } from '@vovikilelik/lens-js';
+import { Store } from '@devstore/lens-js';
 
 export const LocalStore: React.FC = () => {
 	const store = useLocalStore('text');

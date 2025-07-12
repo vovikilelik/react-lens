@@ -1,6 +1,6 @@
 import React from 'react';
 import { useChain, useDebounce, useLens, useLensStore, useLocalStore, useSubscribe } from '../react-lens';
-import { Lens, createStore, transform } from '@vovikilelik/lens-js';
+import { Lens, createStore, transform } from '@devstore/lens-js';
 
 const Component: React.FC = () => {
 	const store = useLocalStore({ foo: '1' });

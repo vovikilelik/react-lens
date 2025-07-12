@@ -1,10 +1,10 @@
 /**
- * LGPL-2.1-or-later
+ * MIT
  */
 
 import React, { Context } from 'react';
 
-import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType, ChainFactory } from "@vovikilelik/lens-js";
+import { Lens, Callback, AttachEvent, Trigger, Instance, Store, DebounceType, ChainFactory } from "@devstore/lens-js";
 
 declare function useSubscribe<T>(lens: Lens<T>, ...callback: Callback<T>[]): void;
 declare function useSubscribe<T>(lens: Lens<T>, c1: Callback<T>, deps: any[]): void;
@@ -27,7 +27,7 @@ declare function useChain<A extends Lens<T>, B extends Lens<any>, T>(lens: Lens<
 
 declare function useDebounce(defaultTimeout?: number): DebounceType;
 
-declare type MatchFunctionOrDirective<T> = Trigger<T> | 'object' | 'strict' | 'path' | 'subtree' | 'deep';
+declare type MatchFunctionOrDirective<T> = Trigger<T> | 'object' | 'objectDefined' | 'strict' | 'path' | 'subtree' | 'deep';
 declare interface TimeoutSet {
 	read: number;
 	write: number;

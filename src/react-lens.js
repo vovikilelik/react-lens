@@ -1,8 +1,8 @@
 /**
- * LGPL-2.1-or-later 
+ * MIT
  */
 
-import { Debounce, Store, Triggers, createStore } from '@vovikilelik/lens-js';
+import { Debounce, Store, Triggers, createStore } from '@devstore/lens-js';
 import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 
 
@@ -53,7 +53,7 @@ export const useDerivedStore = (initData, instance) => {
 };
 
 export const useChain = (lens, instance) => {
-	return useMemo(() => lens.chain(instance), [lens]);
+	return useMemo(() => lens.chain(instance), [lens, instance]);
 };
 
 const _createMatches = (triggersOrDirectives) =>
