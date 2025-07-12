@@ -1,9 +1,9 @@
-It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js). See for more functionality.
+It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See for more functionality.
 
 # Abstract
 `react-lens` is a functional state manager for ReactJS. The whole state is divided into separate models. Each model can be associated with a atom or part of a shared state. All models are inherited from the base model, which already has most of the necessary functions, but you can extend it if necessary.
 
-At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
+At its core, the [`lens-js`](https://www.npmjs.com/package/@devstore/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
 
 ## Links
 * [Homepage](https://react-lens.dev-store.xyz/) for more information
@@ -14,7 +14,7 @@ At its core, the [`lens-js`](https://www.npmjs.com/package/@vovikilelik/lens-js)
 
 ## Instalation
 ```
-npm i @vovikilelik/react-lens
+npm i @devstore/react-lens
 ```
 
 ## Example
@@ -34,7 +34,7 @@ const Counter: React.FC = () => {
 ```
 
 # Overview
-`react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js). See it for more functionality.
+`react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See it for more functionality.
 
 ## Main Futures
 * Global state definition
@@ -57,7 +57,7 @@ To create a global state, the `createStore()` method is used.
 ```ts
 export const store = createStore({ /* Initial data */ });
 ```
->  This method has more functionality, see [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js)
+>  This method has more functionality, see [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js)
 
 #### Local State Definition
 A local state can be created using the same method - `createStore()`. However, there is an easier way using hook `useLensStore()`. It has the same functionality as the `createStore()` + `useMemo()` method.
@@ -222,7 +222,7 @@ const Global: React.FC = () => (
 
 ### Custom Triggers
 
-In cases where we don't need extra updates, we can set special triggers that will prevent unnecessary updates. This is the functionality of [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js), see it for more information.
+In cases where we don't need extra updates, we can set special triggers that will prevent unnecessary updates. This is the functionality of [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js), see it for more information.
 
 Triggers are specified in the `useLens()` hook by the second and subsequent arguments like `useLens(lens, ...triggers)`.
 
@@ -262,7 +262,7 @@ All system triggers will return `undefined` if they failed validation and pass c
 
 ## Utils
 
-Some utilities are described in [**`lens-js`**](https://www.npmjs.com/package/@vovikilelik/lens-js), see it for more information.
+Some utilities are described in [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js), see it for more information.
 
 ### useLensDebounce()
 The `useLensDebounce()` hook allows you to create a bidirectional listener that will update the state with a delay. It works the same way as `useLens()`.
