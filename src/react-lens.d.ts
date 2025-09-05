@@ -37,6 +37,8 @@ declare type DescriptorType<T> = [T, (value: T | ((prev: T) => T)) => void];
 
 declare function useLens<T>(lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
+declare function useLensMemo<R, T>(memo: (lens: Lens<T>) => R, lens: Lens<T>, ...matches: MatchFunctionOrDirective<T>[]): R;
+
 declare function useLensDebounce<T>(lens: Lens<T>, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
 declare type LensContext<T> = Context<{ value: Lens<T> }>;

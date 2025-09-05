@@ -122,6 +122,11 @@ export const useDebounce = (timeout) => {
 	return useMemo(() => new Debounce(timeout), [timeout]);
 };
 
+export const useLensMemo = (memo, lens, trigger = 'object', ...triggers) => {
+	const [value] = useLens(lens, trigger, ...triggers);
+	useMemo(() => memo(lens), [value, lens]);
+}
+
 /**
  * Like useLens(), plus adding throttling.
  */

@@ -1,7 +1,7 @@
 It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See for more functionality.
 
 # Abstract
-`react-lens` is a functional state manager for ReactJS. The whole state is divided into separate models. Each model can be associated with a atom or part of a shared state. All models are inherited from the base model, which already has most of the necessary functions, but you can extend it if necessary.
+A functional state manager for React. Built on top of lens‑js, this library breaks your application state into independent, composable models (atoms), each extending a base model with powerful features and hooks.
 
 At its core, the [`lens-js`](https://www.npmjs.com/package/@devstore/lens-js) library is used, which can work on different frameworks in the same way. This means that some of your code can be transferred between frameworks.
 
@@ -14,29 +14,33 @@ At its core, the [`lens-js`](https://www.npmjs.com/package/@devstore/lens-js) li
 
 ## Instalation
 ```
-npm i @devstore/react-lens
+npm install @devstore/react-lens
+# or using yarn
+yarn add @devstore/react-lens
 ```
 
 ## Example
 The `createStore()` utility Creates a model. The `useLens()` hook will create a subscription to changes in the model and guarantee that the component will be redrawn if the model has changed. It is used in the same way as the built-in ReactJS `useState()`.
 ```ts
+import React from 'react';
+import { createStore, useLens } from '@devstore/react-lens';
+
 const store = createStore(0);
 
 const Counter: React.FC = () => {
   const [count, setCount] = useLens(store);
-
   return (
     <button onClick={() => setCount(count + 1)}>
-      { count }
+      {count}
     </button>
   );
-}
+};
 ```
+* `createStore()` initializes a reactive model (global or local).
+* `useLens()` subscribes your component to changes and triggers re-renders like React’s useState().
 
-# Overview
-`react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See it for more functionality.
+# Core Features
 
-## Main Futures
 * Global state definition
 * Local (Dynamic) state definition
 * Nested state
@@ -45,7 +49,12 @@ const Counter: React.FC = () => {
 * Incapsulation
 * Typings
 
-# Uses
+`react-lens` depends of [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See it for more functionality.
+
+## Asynchronous Updates
+All state changes are batched and applied asynchronously:
+* Multiple updates are combined to avoid redundant renders.
+* Safe to use from asynchronous contexts—no extra middleware required.
 
 ## State Definition Ways
 `react-lens` allows you to create a global and local state. It will depend on your needs.
