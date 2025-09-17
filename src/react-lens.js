@@ -169,11 +169,11 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 	return [value, setter];
 };
 
-export const createLensContext = value => createContext({ value });
+export const createLensContext = value => createContext(value);
 
 export const useLensContext = (context, trigger = 'object', ...triggers) => {
 	const current = useContext(context);
-	return useLens(current.value, trigger, ...triggers);
+	return useLens(current, trigger, ...triggers);
 };
 
 /**

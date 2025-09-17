@@ -41,9 +41,9 @@ declare function useLensMemo<R, T>(memo: (lens: Lens<T>) => R, lens: Lens<T>, ..
 
 declare function useLensDebounce<T>(lens: Lens<T> | undefined, timeout: number | TimeoutSet, ...matches: MatchFunctionOrDirective<T>[]): DescriptorType<T>;
 
-declare type LensContext<T> = Context<{ value: Lens<T> }>;
-declare function createLensContext<T>(value?: Lens<T>): LensContext<T>;
-declare function useLensContext<T>(context: LensContext<T>, defaultLens?: Lens<T> | null, ...triggers: Trigger<T>[]): DescriptorType<T>;
+declare type LensContextType<T> = Context<Lens<T>>;
+declare function createLensContext<T>(value?: Lens<T>): LensContextType<T>;
+declare function useLensContext<T>(context: LensContextType<T>, ...triggers: Trigger<T>[]): DescriptorType<T>;
 
 declare class LensComponent<L, P, S = {}> extends React.Component<P & { lens: Lens<L> }, S & { value: L }> {
     protected onLensChanged(event: AttachEvent<L>, lens: Lens<L>): void;

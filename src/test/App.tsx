@@ -1,6 +1,6 @@
-import React, { Component, useEffect, useRef, useState } from "react";
+import React, { Component, useEffect, useMemo, useRef, useState } from "react";
 
-import { useLens, useLensDebounce, useLensStore, useSubscribe } from "../react-lens";
+import { createLensContext, useLens, useLensDebounce, useLensStore, useSubscribe, useLensContext } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
 import { createLens, Lens } from '@devstore/lens-js';
 
@@ -88,6 +88,27 @@ const UndefinedLens: React.FC<{ value?: Lens<string> }> = ({ value }) => {
 	return text || 'UNDEFINED';
 }
 
+const testContext = createLensContext(undefinedLens);
+
+const LensContextTestPeer: React.FC = () => {
+	const [text, setText] = useLensContext(testContext);
+
+	return <button onClick={() => setText(Math.random() + '')}>{'context is ' + text}</button>;
+}
+
+const LensContext: React.FC<{ value: Lens<any>, children: React.ReactNode }> = ({ value, children }) => {
+	const context = useMemo(() => createLensContext(value), [value]);
+	return <context.Provider value={value}>{children}</context.Provider>
+}
+
+const LensContextTest: React.FC<{ value?: Lens<string> }> = ({ value }) => {
+	return (
+		<LensContext value={undefinedLens}>
+			<LensContextTestPeer />
+		</LensContext>
+	);
+}
+
 class App extends Component {
     render() {
       const name = lens.go('name');
@@ -143,6 +164,10 @@ class App extends Component {
 						<h1>Undefined Lens</h1>
 						<UndefinedLens value={undefinedLens} />
 						<UndefinedLens />
+					</div>
+					<div>
+						<h1>Context</h1>
+						<LensContextTest />
 					</div>
 					<h1>Any Tests</h1>
 					<LocalStore />

@@ -1,6 +1,6 @@
 {
     "name": "@devstore/react-lens",
-    "version": "3.4.4",
+    "version": "3.4.5",
     "license": "MIT",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
