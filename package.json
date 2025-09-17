@@ -1,6 +1,6 @@
 {
     "name": "@devstore/react-lens",
-    "version": "3.4.3",
+    "version": "3.4.4",
     "license": "MIT",
     "description": "Utils for lens implementations in react apps",
     "keywords": [
@@ -24,7 +24,7 @@
     "author": "octopus",
     "contributors": [],
     "dependencies": {
-        "@devstore/lens-js": "^5.0.4"
+        "@devstore/lens-js": "^5.0.5"
     },
     "peerDependencies": {
         "react": ">=17.0.0",

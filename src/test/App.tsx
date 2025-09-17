@@ -1,8 +1,8 @@
-import React, { Component, useRef, useState } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 
 import { useLens, useLensDebounce, useLensStore, useSubscribe } from "../react-lens";
 import { ClassComponent } from "./ClassComponent";
-import { Lens } from '@devstore/lens-js';
+import { createLens, Lens } from '@devstore/lens-js';
 
 import { LensStore, LocalDerivedStore, LocalStore } from './modules';
 
@@ -74,6 +74,20 @@ const SubscribeTest: React.FC = () => {
 	);
 }
 
+const undefinedLens = createLens('text');
+
+const UndefinedLens: React.FC<{ value?: Lens<string> }> = ({ value }) => {
+	const [text, setText] = useLens(value);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setText('text timeout');
+		}, 1000);
+	}, [setText]);
+
+	return text || 'UNDEFINED';
+}
+
 class App extends Component {
     render() {
       const name = lens.go('name');
@@ -125,6 +139,12 @@ class App extends Component {
 						<Flow lens={name} func={() => true} title='true' />
 						<Flow lens={name} func={() => name.get() === '2'} title='===2' />
 					</div>
+					<div>
+						<h1>Undefined Lens</h1>
+						<UndefinedLens value={undefinedLens} />
+						<UndefinedLens />
+					</div>
+					<h1>Any Tests</h1>
 					<LocalStore />
 					<LocalDerivedStore />
 					<LensStore />

@@ -84,9 +84,11 @@ const _match = (matches, ...args) => {
  * Like useState(), plus adding listener for render triggering.
  */
 export const useLens = (lens, trigger = 'object', ...triggers) => {
-	const [value, setValue] = useState(lens.get());
+	const [value, setValue] = useState(lens?.get());
 	
 	useEffect(() => {
+		if (!lens) return;
+
 		setValue(lens.get());
 
 		const matches = _createMatches([trigger, ...triggers]);
@@ -103,7 +105,7 @@ export const useLens = (lens, trigger = 'object', ...triggers) => {
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
-		lens.set(value);
+		lens?.set(value);
 	}, [lens]);
 
 	return [value, setter];
@@ -131,13 +133,15 @@ export const useLensMemo = (memo, lens, trigger = 'object', ...triggers) => {
  * Like useLens(), plus adding throttling.
  */
 export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...triggers) => {
-	const [value, setValue] = useState(lens.get());
+	const [value, setValue] = useState(lens?.get());
 	
 	const debounce = useDebounce(timeout);
 
 	const { read, write } = getTimeoutSet(timeout);
 
 	useEffect(() => {
+		if (!lens) return;
+
 		setValue(lens.get());
 
 		const matches = _createMatches([trigger, ...triggers]);
@@ -159,7 +163,7 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 	
 	const setter = useCallback(value => {
 		setValue(value); /* Need for react sync for input fields (caret jump bug) */
-		debounce.run(() => lens.set(value), write);
+		debounce.run(() => lens?.set(value), write);
 	}, [debounce, lens]);
 
 	return [value, setter];
@@ -167,9 +171,9 @@ export const useLensDebounce = (lens, timeout = 0, trigger = 'object', ...trigge
 
 export const createLensContext = value => createContext({ value });
 
-export const useLensContext = (context, defaultLens, trigger = 'object', ...triggers) => {
+export const useLensContext = (context, trigger = 'object', ...triggers) => {
 	const current = useContext(context);
-	return useLens(current.value || defaultLens, trigger, ...triggers);
+	return useLens(current.value, trigger, ...triggers);
 };
 
 /**
