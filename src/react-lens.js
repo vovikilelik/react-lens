@@ -86,8 +86,8 @@ export const useDerivedStore = (initData, instance) => {
  * @param {Object} instance - Lens instance to use for chaining.
  * @returns {Object} Chained lens instance.
  */
-export const useChain = (lens, instance) => {
-	return useMemo(() => lens.chain(instance), [lens, instance]);
+export const useDelegate = (lens, instance) => {
+	return useMemo(() => lens.delegate(instance), [lens, instance]);
 };
 
 /**
