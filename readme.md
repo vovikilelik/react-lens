@@ -1,3 +1,6 @@
+# New repository
+This repository has relocated to https://www.npmjs.com/package/@devstore/react-lens
+
 It is the ReactJS implementation for [**`lens-js`**](https://www.npmjs.com/package/@devstore/lens-js). See for more functionality.
 
 # Abstract
